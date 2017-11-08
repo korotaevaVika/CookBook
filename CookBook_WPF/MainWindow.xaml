@@ -1,0 +1,66 @@
+﻿<Controls:MetroWindow  x:Class="CookBook_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:CookBook_WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="700"
+                       ShowTitleBar="True"
+                       ShowMaxRestoreButton="True"
+                       ResizeMode="CanResizeWithGrip"
+                       ShowCloseButton="True"
+        xmlns:views="clr-namespace:CookBook_WPF.View"
+        xmlns:vm="clr-namespace:CookBook_WPF.ViewModel"
+                      BorderBrush="{DynamicResource AccentColorBrush}"
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      BorderThickness="1"
+                      WindowStartupLocation="CenterScreen">
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Content="Роль" />
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20"
+                   Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+
+                    </Rectangle>
+                    <TextBlock Margin="4 0 0 0"
+                   VerticalAlignment="Center"
+                   Text="Меню" />
+                </StackPanel>
+
+            </Button>
+            <Button>
+                <StackPanel Name="menuHolder" Orientation="Horizontal">
+                    <Menu Name="mymenu" Margin="4 0 0 0"  VerticalAlignment="Center">
+                        <MenuItem Name="ChangeRoleMU" Header="Сменить роль">
+                            <MenuItem Name="SetRoleMU" Header="Администратор"/>
+                        </MenuItem>
+                        <MenuItem Name="ChangeWindowMU" Header="Окна">
+                            <MenuItem Name="ProductsMU" Header="Продукты" Command="{Binding ShowProductCatalogCommand}"/>
+                            <MenuItem Name="RecipesMU" Header="Рецепты"  Command="{Binding ShowRecipeCatalogCommand}"/>
+                            <MenuItem Name="PlansMU" Header="Планы"/>
+                            <MenuItem Name="BasketsMU" Header="Корзина"/>
+                        </MenuItem>
+                    </Menu>
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ProductCatalogViewModel}">
+            <views:ProductCatalogView></views:ProductCatalogView>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RecipeCatalogViewModel}">
+            <views:RecipeCatalogView></views:RecipeCatalogView>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <ContentControl Content="{Binding CurrentViewModel}"/>
+    </Grid>
+</Controls:MetroWindow>

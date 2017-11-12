@@ -5,12 +5,29 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System;
 using System.Windows;
+using CookBook_WPF.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CookBook_WPF.ViewModel
 {
     public class RecipeCatalogViewModel : BindableBase
     {
         private MainModel _model;
+
+        #region OutputProductsCollection
+        private List<Product> mOutputProductsCollection;
+        public List<Product> OutputProductsCollection
+        {
+            get { return mOutputProductsCollection; }
+            set
+            {
+                mOutputProductsCollection = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
         private DataView mRecipes;
         public DataView Recipes
         {
@@ -33,28 +50,17 @@ namespace CookBook_WPF.ViewModel
             }
         }
 
-        private DataView mGroups;
-        public DataView Groups
-        {
-            get { return mGroups; }
-            set
-            {
-                mGroups = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private DataView mProducts;
-        public DataView Products
-        {
-            get { return mProducts; }
-            set
-            {
-                mProducts = value;
-                LoadMeasures();
-                OnPropertyChanged();
-            }
-        }
+        //private DataView mProducts;
+        //public DataView Products
+        //{
+        //    get { return mProducts; }
+        //    set
+        //    {
+        //        mProducts = value;
+        //        LoadMeasures();
+        //        OnPropertyChanged();
+        //    }
+        //}
 
         private DataRowView mSelectedRecipe;
         public DataRowView SelectedRecipe
@@ -66,27 +72,13 @@ namespace CookBook_WPF.ViewModel
                 if (value != null)
                 {
                     LoadIngredients();
-                    // EditRecipe(null);
+                    EditRecipe(null);
                 }
                 //mDeleteRecipeCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
 
-        private DataRowView mSelectedGroup;
-        public DataRowView SelectedGroup
-        {
-            get { return mSelectedGroup; }
-            set
-            {
-                mSelectedGroup = value;
-                if (value != null)
-                {
-                    LoadProducts();
-                }
-                OnPropertyChanged();
-            }
-        }
 
         private DataRowView mSelectedProduct;
         public DataRowView SelectedProduct
@@ -97,9 +89,9 @@ namespace CookBook_WPF.ViewModel
                 mSelectedProduct = value;
                 if (value != null)
                 {
-                    LoadMeasures();
+                    //  LoadMeasures();
                 }
-                //mDeleteProductCommand.OnCanExecuteChanged();
+                //mDeleteIngredientCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -123,9 +115,9 @@ namespace CookBook_WPF.ViewModel
                 mSelectedMeasureProduct = value;
                 if (value != null)
                 {
-                    LoadMeasures();
+                    //LoadMeasures();
                 }
-                //mDeleteProductCommand.OnCanExecuteChanged();
+                //mDeleteIngredientCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -136,10 +128,10 @@ namespace CookBook_WPF.ViewModel
         private readonly RelayCommand mDeleteRecipeCommand;
         private readonly RelayCommand mSaveRecipeCommand;
 
-        private readonly RelayCommand mAddProductCommand;
-        private readonly RelayCommand mEditProductCommand;
-        private readonly RelayCommand mDeleteProductCommand;
-        private readonly RelayCommand mSaveProductCommand;
+        private readonly RelayCommand mAddIngredientCommand;
+        private readonly RelayCommand mEditIngredientCommand;
+        private readonly RelayCommand mDeleteIngredientCommand;
+        private readonly RelayCommand mSaveIngredientCommand;
 
         private readonly RelayCommand mSaveCommand;
 
@@ -147,19 +139,24 @@ namespace CookBook_WPF.ViewModel
         public ICommand EditRecipeCommand { get { return mEditRecipeCommand; } }
         public ICommand DeleteRecipeCommand { get { return mDeleteRecipeCommand; } }
         public ICommand SaveRecipeCommand { get { return mSaveRecipeCommand; } }
-        public ICommand AddProductCommand { get { return mAddProductCommand; } }
-        public ICommand EditProductCommand { get { return mEditProductCommand; } }
-        public ICommand DeleteProductCommand { get { return mDeleteProductCommand; } }
-        public ICommand SaveProductCommand { get { return mSaveProductCommand; } }
+        public ICommand AddIngredientCommand { get { return mAddIngredientCommand; } }
+        public ICommand EditIngredientCommand { get { return mEditIngredientCommand; } }
+        public ICommand DeleteIngredientCommand { get { return mDeleteIngredientCommand; } }
+        public ICommand SaveProductCommand { get { return mSaveIngredientCommand; } }
 
         public ICommand SaveCommand { get { return mSaveCommand; } }
         #endregion
 
-        #region Material Group Properties
+        #region Recipe Properties
         private bool mIsRecipeEdited;
         private int mRecipeKey;
         private string mRecipeName;
-        private bool mIsContainsFinishedProducts;
+        private string mDescription;
+        private double mPortion;
+        private double mQuantity;
+        private string mMeasure;
+        private Product mOutputProduct;
+
         public bool IsRecipeEdited
         {
             get { return mIsRecipeEdited; }
@@ -187,12 +184,49 @@ namespace CookBook_WPF.ViewModel
                 OnPropertyChanged();
             }
         }
-        public bool IsContainsFinishedProducts
+        public string Description
         {
-            get { return mIsContainsFinishedProducts; }
+            get { return mDescription; }
             set
             {
-                mIsContainsFinishedProducts = value;
+                mDescription = value;
+                OnPropertyChanged();
+            }
+        }
+        public double Portion
+        {
+            get { return mPortion; }
+            set
+            {
+                mPortion = value;
+                OnPropertyChanged();
+            }
+        }
+        public double Quantity
+        {
+            get { return mQuantity; }
+            set
+            {
+                mQuantity = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Measure
+        {
+            get { return mMeasure; }
+            set
+            {
+                mMeasure = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Product OutputProduct
+        {
+            get { return mOutputProduct; }
+            set
+            {
+                mOutputProduct = value;
                 OnPropertyChanged();
             }
         }
@@ -204,14 +238,25 @@ namespace CookBook_WPF.ViewModel
         private string mProductName;
         private double mIngredientQuantity;
 
-        private bool mIsProductEdited;
+        private bool mIsIngredientEdited;
 
-        public bool IsProductEdited
+        public bool IsIngredientEdited
         {
-            get { return mIsProductEdited; }
+            get { return mIsIngredientEdited; }
             set
             {
-                mIsProductEdited = value;
+                mIsIngredientEdited = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public int ProductKey
+        {
+            get { return mProductKey; }
+            set
+            {
+                mProductKey = value;
                 OnPropertyChanged();
             }
         }
@@ -255,18 +300,19 @@ namespace CookBook_WPF.ViewModel
         {
             _model = new MainModel();
             mRecipes = _model.GetRecipes();
+            LoadOutputProducts();
             mAddRecipeCommand = new RelayCommand(AddRecipe);
             mEditRecipeCommand = new RelayCommand(EditRecipe);
             mDeleteRecipeCommand = new RelayCommand(DeleteRecipe, CanDeleteRecipe);
             mSaveRecipeCommand = new RelayCommand(SaveRecipe, CanSaveRecipe);
-            mAddProductCommand = new RelayCommand(AddProduct);
-            mEditProductCommand = new RelayCommand(EditProduct);
-            mDeleteProductCommand = new RelayCommand(DeleteProduct, CanDeleteProduct);
-            mSaveProductCommand = new RelayCommand(SaveProduct, CanSaveProduct);
+            mAddIngredientCommand = new RelayCommand(AddProduct);
+            mEditIngredientCommand = new RelayCommand(EditProduct);
+            mDeleteIngredientCommand = new RelayCommand(DeleteIngredient, CanDeleteIngredient);
+            mSaveIngredientCommand = new RelayCommand(SaveProduct, CanSaveProduct);
             mSaveCommand = new RelayCommand(Save);
 
             IsRecipeEdited = false;
-            IsProductEdited = false;
+            IsIngredientEdited = false;
         }
 
         #region Methods For Commands
@@ -276,24 +322,28 @@ namespace CookBook_WPF.ViewModel
             {
                 SaveRecipe(null);
             }
-            else if (IsProductEdited && CanSaveProduct(null))
+            else if (IsIngredientEdited && CanSaveProduct(null))
             {
                 SaveProduct(null);
             }
         }
         private bool CanSaveRecipe(object obj)
         {
-            return true;
+            return OutputProduct != null && (Portion != 0 || Quantity != 0);
         }
 
         private void SaveRecipe(object obj)
         {
             bool mSuccess = false;
-            //Message = DateTime.Now.ToString() + "\t" +
-            //    _model.SaveRecipe(
-            //    RecipeKey,
-            //    RecipeName,
-            //    ref mSuccess);
+            Message = DateTime.Now.ToString() + "\t" +
+                _model.SaveRecipe(
+                RecipeKey,
+                RecipeName,
+                OutputProduct.nKey,
+                Portion, 
+                Quantity,
+                Description,
+                ref mSuccess);
 
             if (mSuccess)
             {
@@ -322,8 +372,7 @@ namespace CookBook_WPF.ViewModel
 
             if (mSuccess)
             {
-                IsProductEdited = false;
-                LoadProducts();
+                IsIngredientEdited = false;
             }
             else MessageBox.Show(Message, "Error");
 
@@ -332,24 +381,34 @@ namespace CookBook_WPF.ViewModel
         {
             return SelectedRecipe != null;
         }
-        private bool CanDeleteProduct(object obj)
+        private bool CanDeleteIngredient(object obj)
         {
             return SelectedProduct != null;
         }
         private void AddRecipe(object obj)
         {
             IsRecipeEdited = true;
-            IsProductEdited = false;
+            IsIngredientEdited = false;
             RecipeKey = 0;
-            RecipeName = null;
+            RecipeName = string.Empty;
+            OutputProduct = null;
+            Portion = 0;
+            Quantity = 0;
+            Description = string.Empty;
         }
 
         private void EditRecipe(object obj)
         {
-            IsProductEdited = false;
+            IsIngredientEdited = false;
             IsRecipeEdited = true;
             RecipeKey = (int)SelectedRecipe.Row["RecipeKey"];
             RecipeName = (string)SelectedRecipe.Row["RecipeName"];
+            Description = (string)SelectedRecipe.Row["Description"];
+            Portion = (double)SelectedRecipe.Row["Portion"];
+            Quantity = (double)SelectedRecipe.Row["Quantity"];
+
+            OutputProduct = OutputProductsCollection.FirstOrDefault(
+                x => x.nKey == (int)SelectedRecipe.Row["ProductKey"]);
         }
 
         private void DeleteRecipe(object obj)
@@ -367,32 +426,32 @@ namespace CookBook_WPF.ViewModel
 
         private void AddProduct(object obj)
         {
-            IsProductEdited = true;
+            IsIngredientEdited = true;
             IsRecipeEdited = false;
             mProductKey = 0;
             mIngredientKey = 0;
             ProductName = null;
-           
+
         }
 
         private void EditProduct(object obj)
         {
-            IsProductEdited = true;
+            IsIngredientEdited = true;
             IsRecipeEdited = false;
             mIngredientKey = (int)SelectedProduct.Row["IngredientKey"];
             mProductKey = (int)SelectedProduct.Row["ProductKey"];
             ProductName = (string)SelectedProduct.Row["ProductName"];
-           
+
         }
 
-        private void DeleteProduct(object obj)
+        private void DeleteIngredient(object obj)
         {
             bool mSuccess = false;
             //Message = _model.DeleteIngredient((int)SelectedProduct.Row["IngredientKey"], ref mSuccess);
 
             if (mSuccess)
             {
-                IsProductEdited = false;
+                IsIngredientEdited = false;
             }
             else MessageBox.Show(Message, "Error");
         }
@@ -402,18 +461,19 @@ namespace CookBook_WPF.ViewModel
         #region Other Methods
 
         #endregion
-        private void LoadProducts()
-        {
-            Products = _model.GetProducts((int)SelectedGroup.Row["GroupKey"]);
-        }
+        //private void LoadProducts()
+        //{
+        //    Products = _model.GetProducts((int)SelectedGroup.Row["GroupKey"]);
+        //}
         private void LoadIngredients()
         {
             //Products = _model.GetIngredients((int)SelectedRecipe.Row["RecipeKey"]);
+
         }
-        private void LoadMeasures()
+        private void LoadOutputProducts()
         {
+            OutputProductsCollection = _model.GetOutputProducts();
             //MeasureProducts = _model.GetMeasures((int)SelectedProduct.Row["RecipeKey"], 0);
         }
-
     }
 }

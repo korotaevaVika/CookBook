@@ -3,12 +3,14 @@ USE dbCookBook
 DELETE FROM tbl_Product
 DELETE FROM tbl_MaterialGroup
 DELETE FROM tbl_MeasureValue
+GO;
 
 INSERT INTO tbl_Measure VALUES(N'ךד', 1)
 INSERT INTO tbl_Measure VALUES(N'ד', 1)
 INSERT INTO tbl_Measure VALUES(N'רע', 0)
 INSERT INTO tbl_Measure VALUES(N'ק.כ.', 0)
 INSERT INTO tbl_Measure VALUES(N'סע.כ.', 0)
+GO;
 
 INSERT INTO tbl_MaterialGroup
 VALUES (N'Ìÿסמ', 0 )

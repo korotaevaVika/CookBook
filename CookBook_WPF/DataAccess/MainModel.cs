@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CookBook_WPF.Data;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 
 namespace CookBook_WPF.DataAccess
@@ -59,11 +60,11 @@ namespace CookBook_WPF.DataAccess
         {
             using (CookBookModel dbContext = Context)
             {
-
                 Recipe rcp = new Recipe
                 {
                     nProduct = dbContext.Products.FirstOrDefault(),
-                    rQuantity = 100,
+                    rQuantity = dbContext.Recipes.Count() * 100,
+                    szDescription = DateTime.Now.ToString(),
                     szRecipeName = "Тестовый рецепт"
                 };
 
@@ -267,6 +268,84 @@ namespace CookBook_WPF.DataAccess
             }
         }
 
+        internal string SaveRecipe(
+            int recipeKey, 
+            string recipeName, 
+            int nProductKey, 
+            double portion,
+            double quantity,
+            string description, 
+            ref bool mSuccess)
+        {
+            using (CookBookModel dbContext = Context)
+            {
+                try
+                {
+                    if (recipeKey == 0)
+                    {
+                        if (dbContext.Recipes.ToList().Exists(x => x.szRecipeName == recipeName))
+                        {
+                            throw new InvalidOperationException(
+                                "Ошибка создания рецепта\nРецепт с таким именем уже существует");
+                        }
 
+                        var pr = dbContext.Products.FirstOrDefault(x => x.nKey == nProductKey);
+                        dbContext.Recipes.Add(
+                            new Recipe
+                            {
+                                nProduct = pr,
+                                rPortion = portion,
+                                rQuantity = quantity,
+                                szDescription = description,
+                                szRecipeName = recipeName
+                            });
+                        dbContext.SaveChanges();
+                    }
+                    else
+                    {
+                        if (dbContext.Recipes.ToList().Exists(x => x.szRecipeName == recipeName && x.nKey != recipeKey))
+                        {
+                            throw new InvalidOperationException(
+                                "Ошибка редактирования рецепта\nРецепт с таким именем уже существует");
+                        }
+                        Recipe rc = dbContext.Recipes.FirstOrDefault(x => x.nKey == recipeKey);
+
+                        var pr = dbContext.Products.FirstOrDefault(x => x.nKey == nProductKey);
+                        rc.nProduct = pr;
+                        rc.rPortion = portion;
+                        rc.rQuantity = quantity;
+                        rc.szDescription = description;
+                        rc.szRecipeName = recipeName;
+                        dbContext.SaveChanges();
+                    }
+                    mSuccess = true;
+                    return "Рецепт успешно создан/отредактирован";
+                }
+                catch (Exception ex)
+                {
+                    return "Что-то пошло не так...\n" + ex.ToString();
+                }
+            }
+        }
+
+        internal List<Product> GetOutputProducts()
+        {
+            using (CookBookModel dbContext = Context)
+            {
+                try
+                {
+                    List<Product> pd =
+                        dbContext.Products.
+                        Include(p => p.nMaterialGroup).
+                        Where(p => p.nMaterialGroup.bContainsFinishedProduct).
+                        ToList();
+                    return pd;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
     }
 }

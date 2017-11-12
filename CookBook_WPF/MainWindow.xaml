@@ -54,13 +54,13 @@
     </Window.DataContext>
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:ProductCatalogViewModel}">
-            <views:ProductCatalogView></views:ProductCatalogView>
+            <views:ProductCatalogView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:RecipeCatalogViewModel}">
-            <views:RecipeCatalogView></views:RecipeCatalogView>
+            <views:RecipeCatalogView/>
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <ContentControl Content="{Binding CurrentViewModel}"/>
+        <ContentControl Content="{Binding CurrentViewModel, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </Controls:MetroWindow>

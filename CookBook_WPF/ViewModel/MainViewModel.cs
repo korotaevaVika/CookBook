@@ -1,6 +1,7 @@
 ﻿using CookBook_WPF.Helper_Classes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,14 @@ using System.Windows.Input;
 
 namespace CookBook_WPF.ViewModel
 {
-    public class MainViewModel
+    public class MainViewModel : BindableBase
     {
-        public BindableBase CurrentViewModel { get; set; }
+        private BindableBase mCurrentViewModel;
+        public BindableBase CurrentViewModel
+        {
+            get { return mCurrentViewModel; }
+            set { mCurrentViewModel = value; OnPropertyChanged(); }
+        }
 
         #region Commands
         private readonly RelayCommand mShowProductCatalogCommand;

@@ -76,13 +76,18 @@
     </ApplicationDefinition>
     <Compile Include="Converters\CheckBoxConverter.cs" />
     <Compile Include="DataAccess\MainModel.cs" />
+    <Compile Include="Helper Classes\DataWrappers\MeasureProductWrapper.cs" />
     <Compile Include="Helper Classes\RelayCommand.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModel\BindableBase.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainVM.cs" />
+    <Compile Include="ViewModel\MeasureProductRelationViewModel.cs" />
     <Compile Include="ViewModel\RecipeCatalogViewModel.cs" />
     <Compile Include="ViewModel\ProductCatalogViewModel.cs" />
+    <Compile Include="View\MeasureProductRelationControl.xaml.cs">
+      <DependentUpon>MeasureProductRelationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProductCatalogView.xaml.cs">
       <DependentUpon>ProductCatalogView.xaml</DependentUpon>
     </Compile>
@@ -112,6 +117,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\MeasureProductRelationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ProductCatalogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

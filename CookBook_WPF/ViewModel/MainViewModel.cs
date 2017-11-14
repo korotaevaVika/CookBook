@@ -26,7 +26,15 @@ namespace CookBook_WPF.ViewModel
         #endregion
         public MainViewModel()
         {
-            CurrentViewModel = new ProductCatalogViewModel();
+            // CurrentViewModel = new ProductCatalogViewModel();
+            CurrentViewModel = new MeasureProductRelationViewModel(
+                new MeasureProductRelationViewModel.MeasureProductRelationInfo
+                {
+                    productKey = 7,
+                    mainMeasureValueKey = 7,
+                    ParentViewModel = new ProductCatalogViewModel()
+                });
+
             mShowProductCatalogCommand = new RelayCommand(ShowProductCatalog);
             mShowRecipeCatalogCommand = new RelayCommand(ShowRecipeCatalog);
 

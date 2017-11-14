@@ -7,6 +7,7 @@ using CookBook_WPF.Data;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using CookBook_WPF.Helper_Classes.DataWrappers;
 
 namespace CookBook_WPF.DataAccess
 {
@@ -269,12 +270,12 @@ namespace CookBook_WPF.DataAccess
         }
 
         internal string SaveRecipe(
-            int recipeKey, 
-            string recipeName, 
-            int nProductKey, 
+            int recipeKey,
+            string recipeName,
+            int nProductKey,
             double portion,
             double quantity,
-            string description, 
+            string description,
             ref bool mSuccess)
         {
             using (CookBookModel dbContext = Context)
@@ -345,6 +346,61 @@ namespace CookBook_WPF.DataAccess
                 {
                     return null;
                 }
+            }
+        }
+
+        internal List<MeasureProductWrapper> GetMeasureRelations(int productKey)
+        {
+            using (CookBookModel dbContext = Context)
+            {
+                List<MeasureProductWrapper> res = new List<MeasureProductWrapper>();
+
+                int mainMeasureKey = dbContext.MeasureProductRelations.
+                    Include(x => x.nMeasure).
+                    Include(x => x.nProduct).
+                    FirstOrDefault(x => x.nProduct.nKey == productKey && x.bIsDefault).nMeasure.nKey;
+
+                dbContext.MeasureProductRelations.
+                    Include(x => x.nMeasure).
+                    Include(x => x.nProduct).
+                    Where(x => x.nProduct.nKey == productKey && !x.bIsDefault).
+                    ToList().ForEach(x =>
+                    {
+                        res.Add(
+                            new MeasureProductWrapper
+                            {
+                                IsSaved = true,
+                                CurrentMeasureQuantity = 1,
+                                MainMeasureQuantity = 1 / x.rQuantity,
+                                Proportion = x.rQuantity,
+                                MeasureKey = x.nMeasure.nKey,
+                                MeasureName = x.nMeasure.szMeasureName,
+                                IngredientKey = x.nKey
+                            });
+                    });
+
+                List<int> enteredMeasures = res.Select(x => x.MeasureKey).ToList();
+                dbContext.Measures.
+                    Where(x => x.nKey != mainMeasureKey && !enteredMeasures.Contains(x.nKey)).
+                    ToList().
+                    ForEach(x =>
+                    {
+                        res.Add(
+                            new MeasureProductWrapper
+                            {
+                                IsSaved = false,
+                                CurrentMeasureQuantity = null,
+                                MainMeasureQuantity = null,
+                                Proportion = null,
+                                MeasureKey = x.nKey,
+                                MeasureName = x.szMeasureName,
+                                IngredientKey = 0
+                            });
+                    });
+
+                return res;
+
+
             }
         }
     }

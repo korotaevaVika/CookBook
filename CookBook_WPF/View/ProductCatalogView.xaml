@@ -8,6 +8,10 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:converters="clr-namespace:CookBook_WPF.Converters"
+             
+                             
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
              >
     <UserControl.Resources>
         <converters:CheckBoxConverter x:Key="CheckBoxConverter"/>

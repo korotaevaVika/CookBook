@@ -1,16 +1,20 @@
 ﻿using CookBook_WPF.Helper_Classes;
+using CookBook_WPF.View;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace CookBook_WPF.ViewModel
 {
     public class MainViewModel : BindableBase
     {
+
         private BindableBase mCurrentViewModel;
         public BindableBase CurrentViewModel
         {
@@ -26,15 +30,18 @@ namespace CookBook_WPF.ViewModel
         #endregion
         public MainViewModel()
         {
-            // CurrentViewModel = new ProductCatalogViewModel();
-            CurrentViewModel = new MeasureProductRelationViewModel(
-                new MeasureProductRelationViewModel.MeasureProductRelationInfo
-                {
-                    productKey = 7,
-                    mainMeasureValueKey = 7,
-                    ParentViewModel = new ProductCatalogViewModel()
-                });
+            CurrentViewModel = new ProductCatalogViewModel();
+            //CurrentViewModel = new MeasureProductRelationViewModel(
+            //    new MeasureProductRelationViewModel.MeasureProductRelationInfo
+            //    {
+            //        productKey = 7,
+            //        mainMeasureValueKey = 7,
+            //        ParentViewModel = new ProductCatalogViewModel(new DialogCoordinator())
+            //    });
+           // CurrentViewModel = new ProductCatalogViewModel();
 
+            //DialogWindow wn = new DialogWindow();
+            
             mShowProductCatalogCommand = new RelayCommand(ShowProductCatalog);
             mShowRecipeCatalogCommand = new RelayCommand(ShowRecipeCatalog);
 

@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+       
+                       
         xmlns:local="clr-namespace:CookBook_WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="700"
@@ -58,6 +60,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:RecipeCatalogViewModel}">
             <views:RecipeCatalogView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MeasureProductRelationViewModel}">
+            <views:MeasureProductRelationControl/>
         </DataTemplate>
     </Window.Resources>
     <Grid>

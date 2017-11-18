@@ -53,33 +53,66 @@ namespace CookBook_WPF.ViewModel
                 OnPropertyChanged();
             }
         }
+        private string mUserInput;
+        public string UserInput
+        {
+            get { return mUserInput; }
+            set
+            {
+                mUserInput = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool mCancel;
+        public bool Cancel
+        {
+            get { return mCancel; }
+            set
+            {
+                mCancel = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
+        public MeasureProductRelationViewModel()
+        {
+            _model = new MainModel();
+            // _info = info;
+
+            //mSaveCommand = new RelayCommand(Save);
+            mBackToParentViewModelCommand = new RelayCommand(BackToParentViewModel);
+            UserInput = "fuy";
+        }
+
+
         public MeasureProductRelationViewModel(MeasureProductRelationInfo info)
         {
             _model = new MainModel();
             _info = info;
 
-            mSaveCommand = new RelayCommand(Save);
+            // mSaveCommand = new RelayCommand(Save);
             mBackToParentViewModelCommand = new RelayCommand(BackToParentViewModel);
-            
+
 
         }
 
         #region Methods For Commands
         private void BackToParentViewModel(object obj)
         {
-           MessageBoxResult result = 
-                MessageBox.Show(
-                    "Сохранить изменения?", 
-                    "Сохранение данных", 
-                    MessageBoxButton.YesNo, 
-                    MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
-            {
-                Save(obj);
-            }
-            
+            //Not strictly MVVM but prefer the simplicity of using code-behind for this
+
+            //switch (e.Key)
+            //{
+
+            //    case Key.Enter:
+            //        if (this.DataContext != null) (dynamic)this.DataContext.butOK();
+            //        break;
+            Cancel = true;
         }
+
+
+
+
 
         private void Save(object obj)
         {

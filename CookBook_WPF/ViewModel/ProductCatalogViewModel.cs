@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System;
 using System.Windows;
+using CookBook_WPF.View;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace CookBook_WPF.ViewModel
 {
@@ -32,8 +34,8 @@ namespace CookBook_WPF.ViewModel
                 OnPropertyChanged();
             }
         }
-        
-        
+
+
         private DataRowView mSelectedGroup;
         public DataRowView SelectedGroup
         {
@@ -66,7 +68,7 @@ namespace CookBook_WPF.ViewModel
                 OnPropertyChanged();
             }
         }
-        
+
         #region Commands
         private readonly RelayCommand mAddGroupCommand;
         private readonly RelayCommand mEditGroupCommand;
@@ -252,8 +254,15 @@ namespace CookBook_WPF.ViewModel
             }
         }
         #endregion
+
+        private readonly IDialogCoordinator _dialogCoordinator;
+        private readonly MeasureProductRelationControl _dialogView = new MeasureProductRelationControl();
+
         public ProductCatalogViewModel()
         {
+            _dialogCoordinator = new DialogCoordinator();
+            // _dialogView = new MeasureProductRelationControl();
+
             _model = new MainModel();
             mMaterialGroups = _model.GetMaterialGroups();
             mAddGroupCommand = new RelayCommand(AddGroup);
@@ -267,6 +276,43 @@ namespace CookBook_WPF.ViewModel
             mSaveCommand = new RelayCommand(Save);
             IsGroupEdited = false;
             IsProductEdited = false;
+
+        }
+
+        private string _dialogResult;
+        public string DialogResult
+        {
+            get { return _dialogResult; }
+            set
+            {
+                if (_dialogResult == value)
+                {
+                    return;
+                }
+                _dialogResult = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void ShowDialog()
+        {
+            //new MeasureProductRelationViewModel.MeasureProductRelationInfo
+            //{
+            //    productKey = 7,
+            //    mainMeasureValueKey = 7,
+            //    ParentViewModel = new ProductCatalogViewModel()
+            //};
+            var vr = string.Empty;
+            MeasureProductRelationControl inputDialog = new MeasureProductRelationControl();
+            if (inputDialog.ShowDialog() == true)
+                vr = inputDialog.Answer;
+
+        }
+
+        public void ProcessUserInput(string input_message)
+        {
+            Console.WriteLine("Users firstname is " + input_message);
+
         }
 
         #region Methods For Commands
@@ -347,6 +393,7 @@ namespace CookBook_WPF.ViewModel
             GroupKey = 0;
             GroupName = null;
             IsContainsFinishedProducts = false;
+            
         }
 
         private void EditGroup(object obj)
@@ -399,6 +446,7 @@ namespace CookBook_WPF.ViewModel
             {
                 Energy = (double)SelectedProduct.Row["Energy"];
             }
+
             try
             {
                 DefaultMeasure = (string)_model.GetMeasures(ProductKey, 1)[0].Row["MeasureName"];
@@ -429,7 +477,10 @@ namespace CookBook_WPF.ViewModel
                    mProtein,
                    mFat,
                    mCarbohydrates);
+                ShowDialog();
+
             }
+
         }
         #endregion
         private void LoadProducts()

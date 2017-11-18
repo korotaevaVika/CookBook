@@ -11,7 +11,17 @@
 
              xmlns:vm="clr-namespace:CookBook_WPF.ViewModel"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:converters="clr-namespace:CookBook_WPF.Converters">
+             xmlns:converters="clr-namespace:CookBook_WPF.Converters"
+             Title="Dialog Window" Height="400" Width="700"
+                       ShowTitleBar="True"
+                       ShowMaxRestoreButton="True"
+                       ResizeMode="CanMinimize"
+                       ShowCloseButton="False"
+                      BorderBrush="{DynamicResource AccentColorBrush}"
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      BorderThickness="1"
+                      WindowStartupLocation="CenterScreen" 
+                      >
     <Controls:MetroWindow.InputBindings>
         <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}"/>
     </Controls:MetroWindow.InputBindings>
@@ -41,66 +51,54 @@
             </Grid.ColumnDefinitions>
             <StackPanel 
             Orientation="Horizontal" 
-            Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+            Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
             HorizontalAlignment="Left"
             >
                 <Button Style="{DynamicResource MetroCircleButtonStyle}" 
                     Width="30" Height="30" 
+                        Click="BackToParentVM"
                     Command="{Binding BackToParentViewModelCommand}">
                     <iconPacks:PackIconModern Kind="ArrowLeft" />
                 </Button>
 
             </StackPanel>
-            <ListView Margin="10" Name="lvDataBinding">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <WrapPanel>
-                            <TextBlock Text="Name: " />
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                            <TextBlock Text=", " />
-                            <TextBlock Text="Age: " />
-                            <TextBlock Text="{Binding Age}" FontWeight="Bold" />
-                            <TextBlock Text=" (" />
-                            <TextBlock Text="{Binding Mail}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand" />
-                            <TextBlock Text=")" />
-                        </WrapPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <ListView ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                            <ListView ItemsSource="{Binding MeasureProductWrappers}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel 
-                                        Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding IsSaved}"/>
-                                            <TextBlock Text="В " />
-                                            <TextBox
-                                            Text="{Binding CurrentMeasureQuantity}" 
-                                            FontWeight="Bold" />
-                                            <TextBlock Text="{Binding DataContext.MainMeasureValueName}" />
-                                            <TextBlock Text="{Binding MainMeasureValueName}" />
+           
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                          Grid.Row="2"
+                          Grid.Column="1" Grid.ColumnSpan="3">
+                <ListView ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ItemsSource="{Binding MeasureProductWrappers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedMeasureProductWrapper, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.ItemTemplate>
 
-                                            <TextBox Text="{Binding MainMeasureQuantity}"
-                                                 FontWeight="Bold" />
-                                            <TextBlock Text=" / Пропорция - > " />
-                                            <TextBox Text="{Binding Proportion}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </ScrollViewer>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <StackPanel>
+                        <DataTemplate>
+                            <StackPanel Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrush}}" Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsSaved}"/>
+                                <TextBox
+                                    Text="{Binding CurrentMeasureQuantity}" 
+                                    FontWeight="Bold"
+                                    Margin="5, 0"/>
+                                <TextBlock Text="{Binding MeasureName}" Width="40"/>
+                                <TextBlock Text="&lt; ->" Width="30" TextAlignment="Center"/>
+                                <TextBlock Text="{Binding MainMeasureName}" Width="40" />
+
+                                <TextBox Text="{Binding MainMeasureQuantity}"
+                                         FontWeight="Bold"
+                                         Margin="5, 0"/>
+                                <TextBlock Text=" Пропорция - > " TextAlignment="Center"/>
+                                <TextBox Text="{Binding Proportion}"  Width="40"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+
+            <!--<StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3">
                 <Button Click="BackToParentVM"
                 Content="Get back using CodeBehind"
                 DockPanel.Dock="Top" Margin="0,0,-234,0" />
-            </StackPanel>
+            </StackPanel>-->
             <StatusBar
             Grid.Row="5" 
             Grid.Column="0" Grid.ColumnSpan="5">  

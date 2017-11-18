@@ -139,6 +139,103 @@ namespace CookBook_WPF.DataAccess
                 }
             }
         }
+
+        internal string SaveMeasureProductRelations(
+            List<MeasureProductWrapper> measureProductWrappers,
+            int productKey,
+            ref bool mSuccess)
+        {
+            using (CookBookModel dbContext = Context)
+            {
+
+                int mainMeasureKey = measureProductWrappers.FirstOrDefault().MainMeasureKey;
+
+                //сначала обход существующих отношений и удаление ненужных
+                measureProductWrappers.
+                    Where(x => x.IsChanged && !x.IsSaved && (x.MeasureProductKey != 0)).
+                    ToList().
+                    ForEach(x =>
+                    {
+                        var item = dbContext.MeasureProductRelations.FirstOrDefault(w => w.nKey == x.MeasureProductKey);
+                        dbContext.MeasureProductRelations.Remove(item);
+                    });
+                dbContext.SaveChanges();
+
+                //обход существующих и изменение их количества
+                var existingMeasures = dbContext.MeasureProductRelations.
+                    Include(x => x.nProduct).
+                    Where(x => x.nProduct.nKey == productKey && x.bIsDefault).ToList();
+
+                bool isError = false;
+                measureProductWrappers.
+                   Where(x => x.IsChanged && x.IsSaved && (x.MeasureProductKey != 0)).
+                   ToList().
+                   ForEach(x =>
+                   {
+                       try
+                       {
+                           existingMeasures.FirstOrDefault(v => v.nKey == x.MeasureProductKey).rQuantity =
+                           x.Proportion.HasValue ? x.Proportion.Value : (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value);
+                       }
+                       catch
+                       {
+                           isError = true;
+                           //throw;
+                       }
+                   });
+                if (isError)
+                {
+                    mSuccess = false;
+                    return "Ошибка записи данных. Не все данные были заполнены..";
+                }
+                else
+                {
+                    dbContext.SaveChanges();
+                }
+
+                var pr = dbContext.Products.FirstOrDefault(m => m.nKey == productKey);
+                measureProductWrappers.
+                   Where(x => x.IsChanged && x.IsSaved && (x.MeasureProductKey == 0)).
+                   ToList().
+                   ForEach(x =>
+                   {
+                       try
+                       {
+                           var ms = dbContext.Measures.FirstOrDefault(m => m.nKey == x.MeasureKey);
+                           dbContext.MeasureProductRelations.Add(
+                               new MeasureProductRelation
+                               {
+                                   bIsDefault = false,
+                                   nMeasure = ms,
+                                   nProduct = pr,
+                                   rQuantity = x.Proportion.HasValue ?
+                                            x.Proportion.Value :
+                                            (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value)
+                               });
+                           dbContext.SaveChanges();
+                       }
+                       catch
+                       {
+                           isError = true;
+                       }
+                   });
+                if (isError)
+                {
+                    mSuccess = false;
+                    return "Ошибка записи данных. Не все данные были заполнены..";
+                }
+                else
+                {
+                    mSuccess = true;
+                    return "Изменения успешно сохранены";
+                }
+
+
+
+
+            }
+        }
+
         public string SaveMaterial(
             int productKey,
             string productName,
@@ -355,11 +452,14 @@ namespace CookBook_WPF.DataAccess
             {
                 List<MeasureProductWrapper> res = new List<MeasureProductWrapper>();
 
-                int mainMeasureKey = dbContext.MeasureProductRelations.
+                var mainMeasure = dbContext.MeasureProductRelations.
                     Include(x => x.nMeasure).
                     Include(x => x.nProduct).
-                    FirstOrDefault(x => x.nProduct.nKey == productKey && x.bIsDefault).nMeasure.nKey;
+                    FirstOrDefault(x => x.nProduct.nKey == productKey && x.bIsDefault);
 
+                int mainMeasureKey = mainMeasure.nMeasure.nKey;
+
+                //Add to result set existing measures 
                 dbContext.MeasureProductRelations.
                     Include(x => x.nMeasure).
                     Include(x => x.nProduct).
@@ -375,10 +475,15 @@ namespace CookBook_WPF.DataAccess
                                 Proportion = x.rQuantity,
                                 MeasureKey = x.nMeasure.nKey,
                                 MeasureName = x.nMeasure.szMeasureName,
-                                IngredientKey = x.nKey
+                                MeasureProductKey = x.nKey,
+                                MainMeasureName = mainMeasure.nMeasure.szMeasureName,
+                                MainMeasureKey = mainMeasureKey,
+                                IsChanged = false
+
                             });
                     });
 
+                //Add to result set NOT existing measures 
                 List<int> enteredMeasures = res.Select(x => x.MeasureKey).ToList();
                 dbContext.Measures.
                     Where(x => x.nKey != mainMeasureKey && !enteredMeasures.Contains(x.nKey)).
@@ -394,7 +499,10 @@ namespace CookBook_WPF.DataAccess
                                 Proportion = null,
                                 MeasureKey = x.nKey,
                                 MeasureName = x.szMeasureName,
-                                IngredientKey = 0
+                                MeasureProductKey = 0,
+                                MainMeasureName = mainMeasure.nMeasure.szMeasureName,
+                                MainMeasureKey = mainMeasureKey,
+                                IsChanged = false
                             });
                     });
 
@@ -404,4 +512,5 @@ namespace CookBook_WPF.DataAccess
             }
         }
     }
+
 }

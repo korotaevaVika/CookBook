@@ -304,6 +304,13 @@ namespace CookBook_WPF.ViewModel
             //};
             var vr = string.Empty;
             MeasureProductRelationControl inputDialog = new MeasureProductRelationControl();
+            inputDialog.SetInfo(
+                new MeasureProductRelationViewModel.MeasureProductRelationInfo
+                {
+                    productKey = ProductKey,
+                    mainMeasureValueKey = 9,
+                    mainMeasureValueName = DefaultMeasure
+                });
             if (inputDialog.ShowDialog() == true)
                 vr = inputDialog.Answer;
 
@@ -393,7 +400,7 @@ namespace CookBook_WPF.ViewModel
             GroupKey = 0;
             GroupName = null;
             IsContainsFinishedProducts = false;
-            
+
         }
 
         private void EditGroup(object obj)

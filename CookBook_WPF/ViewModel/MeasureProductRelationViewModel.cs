@@ -20,7 +20,19 @@ namespace CookBook_WPF.ViewModel
             public BindableBase ParentViewModel { get; set; }
         }
         private MeasureProductRelationInfo _info;
-
+        public MeasureProductRelationInfo Info
+        {
+            get { return _info; }
+            set
+            {
+                _info = value;
+                if (value != null)
+                {
+                    LoadData();
+                }
+                OnPropertyChanged();
+            }
+        }
         private MainModel _model;
         private List<MeasureProductWrapper> mMeasureProductWrappers;
         public List<MeasureProductWrapper> MeasureProductWrappers
@@ -32,14 +44,22 @@ namespace CookBook_WPF.ViewModel
                 OnPropertyChanged();
             }
         }
-        public string MainMeasureValueName { get { return _info.mainMeasureValueName; } }
+        public string MainMeasureValueName { get { return _info?.mainMeasureValueName; } }
+        private MeasureProductWrapper mSelectedMeasureProductWrapper;
+        public MeasureProductWrapper SelectedMeasureProductWrapper
+        {
+            get { return mSelectedMeasureProductWrapper; }
+            set
+            {
+                mSelectedMeasureProductWrapper = value;
+                OnPropertyChanged();
+            }
+        }
 
         #region Commands
         private readonly RelayCommand mSaveCommand;
-        private readonly RelayCommand mBackToParentViewModelCommand;
 
         public ICommand SaveCommand { get { return mSaveCommand; } }
-        public ICommand BackToParentViewModelCommand { get { return mBackToParentViewModelCommand; } }
         #endregion
 
         #region Other Properties
@@ -77,66 +97,31 @@ namespace CookBook_WPF.ViewModel
         public MeasureProductRelationViewModel()
         {
             _model = new MainModel();
-            // _info = info;
-
-            //mSaveCommand = new RelayCommand(Save);
-            mBackToParentViewModelCommand = new RelayCommand(BackToParentViewModel);
-            UserInput = "fuy";
-        }
-
-
-        public MeasureProductRelationViewModel(MeasureProductRelationInfo info)
-        {
-            _model = new MainModel();
-            _info = info;
-
-            // mSaveCommand = new RelayCommand(Save);
-            mBackToParentViewModelCommand = new RelayCommand(BackToParentViewModel);
-
-
+            mSaveCommand = new RelayCommand(Save);
         }
 
         #region Methods For Commands
-        private void BackToParentViewModel(object obj)
-        {
-            //Not strictly MVVM but prefer the simplicity of using code-behind for this
-
-            //switch (e.Key)
-            //{
-
-            //    case Key.Enter:
-            //        if (this.DataContext != null) (dynamic)this.DataContext.butOK();
-            //        break;
-            Cancel = true;
-        }
-
-
-
-
-
         private void Save(object obj)
         {
             bool mSuccess = false;
             mSuccess = true;
-            //Message = DateTime.Now.ToString() + "\t" +
-            //    _model.SaveMeasureProductRelations(
-            //        MeasureProductWrappers,
-            //        ref mSuccess);
+            Message = DateTime.Now.ToString() + "\t" +
+                _model.SaveMeasureProductRelations(
+                    MeasureProductWrappers,
+                    Info.productKey,
+                    ref mSuccess);
 
             if (mSuccess)
             {
                 LoadData();
+                UserInput = "Success";
             }
-            else MessageBox.Show(Message, "Error");
+            else UserInput = "Error";
 
         }
 
-
         #endregion
 
-        #region Other Methods
-
-        #endregion
         private void LoadData()
         {
             MeasureProductWrappers = _model.GetMeasureRelations(_info.productKey);

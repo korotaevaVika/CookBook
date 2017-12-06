@@ -1,12 +1,14 @@
 ﻿using CookBook_WPF.DataAccess;
 using CookBook_WPF.Helper_Classes;
 using System.Data;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System;
 using System.Windows;
 using CookBook_WPF.View;
 using MahApps.Metro.Controls.Dialogs;
+using CookBook_WPF.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CookBook_WPF.ViewModel
 {
@@ -80,6 +82,8 @@ namespace CookBook_WPF.ViewModel
         private readonly RelayCommand mDeleteProductCommand;
         private readonly RelayCommand mSaveProductCommand;
 
+        private readonly RelayCommand mOpenMeasureWindowCommand;
+
         private readonly RelayCommand mSaveCommand;
 
         public ICommand AddGroupCommand { get { return mAddGroupCommand; } }
@@ -92,6 +96,8 @@ namespace CookBook_WPF.ViewModel
         public ICommand SaveProductCommand { get { return mSaveProductCommand; } }
 
         public ICommand SaveCommand { get { return mSaveCommand; } }
+        public ICommand OpenMeasureWindowCommand { get { return mOpenMeasureWindowCommand; } }
+
         #endregion
 
         #region Material Group Properties
@@ -136,14 +142,15 @@ namespace CookBook_WPF.ViewModel
             }
         }
 
-        private string mDefaultMeasure;
-        public string DefaultMeasure
+        private Measure mDefaultMeasure;
+        public Measure DefaultMeasure
         {
             get { return mDefaultMeasure; }
             set
             {
                 mDefaultMeasure = value;
                 OnPropertyChanged();
+                mOpenMeasureWindowCommand.OnCanExecuteChanged();
             }
         }
         #endregion
@@ -196,6 +203,8 @@ namespace CookBook_WPF.ViewModel
             set
             {
                 mProductName = value;
+                mSaveProductCommand.OnCanExecuteChanged();
+
                 OnPropertyChanged();
             }
         }
@@ -243,6 +252,14 @@ namespace CookBook_WPF.ViewModel
         #endregion
 
         #region Other Properties
+        private List<Measure> mMeasureValuesCollection;
+        public List<Measure> MeasureValuesCollection
+        {
+            get { return mMeasureValuesCollection; }
+            set { mMeasureValuesCollection = value; }
+
+        }
+
         private string mMessage;
         public string Message
         {
@@ -273,10 +290,34 @@ namespace CookBook_WPF.ViewModel
             mEditProductCommand = new RelayCommand(EditProduct);
             mDeleteProductCommand = new RelayCommand(DeleteProduct, CanDeleteProduct);
             mSaveProductCommand = new RelayCommand(SaveProduct, CanSaveProduct);
-            mSaveCommand = new RelayCommand(Save);
+            mSaveCommand = new RelayCommand(Save, CanSave);
+            mOpenMeasureWindowCommand = new RelayCommand(ShowMeasureRelationDialog, CanShowMeasureRelationDialog);
             IsGroupEdited = false;
             IsProductEdited = false;
 
+            LoadMeasures();
+        }
+
+
+
+        private void LoadMeasures()
+        {
+            DataTable dt = _model.GetMeasures(0, 0)?.Table;
+            var test = new List<Measure>();
+            if (dt != null)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    var obj = new Measure()
+                    {
+                        szMeasureName = (string)row["MeasureName"],
+                        nKey = (int)row["MeasureKey"],
+                        bIsDefault = (bool)row["IsDefault"]
+                    };
+                    test.Add(obj);
+                };
+            }
+            mMeasureValuesCollection = test;
         }
 
         private string _dialogResult;
@@ -294,25 +335,40 @@ namespace CookBook_WPF.ViewModel
             }
         }
 
-        private void ShowDialog()
+        private void ShowMeasureRelationDialog(object obj)
         {
-            //new MeasureProductRelationViewModel.MeasureProductRelationInfo
-            //{
-            //    productKey = 7,
-            //    mainMeasureValueKey = 7,
-            //    ParentViewModel = new ProductCatalogViewModel()
-            //};
-            var vr = string.Empty;
-            MeasureProductRelationControl inputDialog = new MeasureProductRelationControl();
-            inputDialog.SetInfo(
-                new MeasureProductRelationViewModel.MeasureProductRelationInfo
-                {
-                    productKey = ProductKey,
-                    mainMeasureValueKey = 9,
-                    mainMeasureValueName = DefaultMeasure
-                });
-            if (inputDialog.ShowDialog() == true)
-                vr = inputDialog.Answer;
+            if (CanSaveProduct(null))
+            {
+                bool mSuccess = false;
+                Message = DateTime.Now.ToString() + "\t" +
+                    _model.SaveMaterial(
+                    ref mProductKey,
+                    ProductName,
+                    Protein,
+                    Fat,
+                    Carbohydrates,
+                    Energy,
+                    (int)SelectedGroup.Row["GroupKey"],
+                    DefaultMeasure.nKey,
+                     ref mSuccess);
+
+                if (!mSuccess)
+                    MessageBox.Show(Message, "Error");
+
+                var vr = string.Empty;
+                MeasureProductRelationControl inputDialog = new MeasureProductRelationControl();
+                inputDialog.SetInfo(
+                    new MeasureProductRelationViewModel.MeasureProductRelationInfo
+                    {
+                        productKey = mProductKey,
+                        // mainMeasureValueKey = DefaultMeasureKey,
+                        mainMeasureValueName = DefaultMeasure?.szMeasureName
+                    });
+                if (inputDialog.ShowDialog() == true)
+                    vr = inputDialog.Answer;
+            }
+
+
 
         }
 
@@ -355,12 +411,21 @@ namespace CookBook_WPF.ViewModel
                 MaterialGroups = _model.GetMaterialGroups();
             }
             else MessageBox.Show(Message, "Error");
-
-
         }
+
         private bool CanSaveProduct(object obj)
         {
-            return true;
+            return !string.IsNullOrEmpty(ProductName) &&
+                !string.IsNullOrWhiteSpace(ProductName);
+        }
+
+        private bool CanSave(object obj)
+        {
+            return IsProductEdited && CanSaveProduct(null) || IsGroupEdited && CanSaveGroup(null);
+        }
+        private bool CanShowMeasureRelationDialog(object obj)
+        {
+            return DefaultMeasure != null && CanSaveProduct(null);
         }
 
         private void SaveProduct(object obj)
@@ -368,13 +433,14 @@ namespace CookBook_WPF.ViewModel
             bool mSuccess = false;
             Message = DateTime.Now.ToString() + "\t" +
                 _model.SaveMaterial(
-                ProductKey,
+                ref mProductKey,
                 ProductName,
                 Protein,
                 Fat,
                 Carbohydrates,
                 Energy,
                 (int)SelectedGroup.Row["GroupKey"],
+                DefaultMeasure?.nKey,
                  ref mSuccess);
 
             if (mSuccess)
@@ -400,7 +466,6 @@ namespace CookBook_WPF.ViewModel
             GroupKey = 0;
             GroupName = null;
             IsContainsFinishedProducts = false;
-
         }
 
         private void EditGroup(object obj)
@@ -422,7 +487,6 @@ namespace CookBook_WPF.ViewModel
                 IsGroupEdited = false;
             }
             else MessageBox.Show(Message, "Error");
-
         }
 
         private void AddProduct(object obj)
@@ -436,19 +500,21 @@ namespace CookBook_WPF.ViewModel
             Fat = 0;
             Carbohydrates = 0;
             Energy = 0;
-            DefaultMeasure = string.Empty;
+            DefaultMeasure = null;
         }
 
         private void EditProduct(object obj)
         {
             IsProductEdited = true;
             IsGroupEdited = false;
+
             ProductKey = (int)SelectedProduct.Row["ProductKey"];
             ProductName = (string)SelectedProduct.Row["ProductName"];
             AutoCountEnergy = false;
             Protein = (double)SelectedProduct.Row["Protein"];
             Fat = (double)SelectedProduct.Row["Fat"];
             Carbohydrates = (double)SelectedProduct.Row["Carbohydrates"];
+
             if (!AutoCountEnergy)
             {
                 Energy = (double)SelectedProduct.Row["Energy"];
@@ -456,9 +522,14 @@ namespace CookBook_WPF.ViewModel
 
             try
             {
-                DefaultMeasure = (string)_model.GetMeasures(ProductKey, 1)[0].Row["MeasureName"];
+                var res = _model.GetMeasures(ProductKey, 1)[0];
+                DefaultMeasure = MeasureValuesCollection.FirstOrDefault(
+                    x => x.nKey == (int)res.Row["MeasureKey"]);
             }
-            catch { DefaultMeasure = string.Empty; }
+            catch
+            {
+                DefaultMeasure = null;
+            }
         }
 
         private void DeleteProduct(object obj)
@@ -469,6 +540,7 @@ namespace CookBook_WPF.ViewModel
             if (mSuccess)
             {
                 IsProductEdited = false;
+                LoadProducts();
             }
             else MessageBox.Show(Message, "Error");
         }
@@ -484,10 +556,7 @@ namespace CookBook_WPF.ViewModel
                    mProtein,
                    mFat,
                    mCarbohydrates);
-                ShowDialog();
-
             }
-
         }
         #endregion
         private void LoadProducts()

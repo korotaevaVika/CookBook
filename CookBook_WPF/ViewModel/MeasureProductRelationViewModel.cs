@@ -1,10 +1,7 @@
 ﻿using CookBook_WPF.DataAccess;
 using CookBook_WPF.Helper_Classes;
-using System.Data;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System;
-using System.Windows;
 using System.Collections.Generic;
 using CookBook_WPF.Helper_Classes.DataWrappers;
 
@@ -124,7 +121,19 @@ namespace CookBook_WPF.ViewModel
 
         private void LoadData()
         {
-            MeasureProductWrappers = _model.GetMeasureRelations(_info.productKey);
+            try
+            {
+                bool mSuccess = false;
+                mSuccess = true;
+                string mErrorMessage = null;
+                MeasureProductWrappers = _model.GetMeasureRelations(_info.productKey, ref mErrorMessage, ref mSuccess);
+                if (!mSuccess)
+                {
+                    Message = DateTime.Now.ToString() + "\t" + mErrorMessage;
+                }
+            }
+            catch { }
+
         }
 
     }

@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace CookBook_WPF.View
 {
     /// <summary>
-    /// Логика взаимодействия для RecipeCatalogView.xaml
+    /// Логика взаимодействия для PlanCatalogView.xaml
     /// </summary>
-    public partial class RecipeCatalogView : UserControl
+    public partial class PlanCatalogView : UserControl
     {
-        public RecipeCatalogView()
+        public PlanCatalogView()
         {
             InitializeComponent();
             Focusable = true;

@@ -12,7 +12,7 @@
              xmlns:vm="clr-namespace:CookBook_WPF.ViewModel"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:converters="clr-namespace:CookBook_WPF.Converters"
-             Title="Dialog Window" Height="400" Width="700"
+             Title="Единицы измерения" Height="400" Width="700"
                        ShowTitleBar="True"
                        ShowMaxRestoreButton="True"
                        ResizeMode="CanMinimize"
@@ -56,8 +56,7 @@
             >
                 <Button Style="{DynamicResource MetroCircleButtonStyle}" 
                     Width="30" Height="30" 
-                        Click="BackToParentVM"
-                    Command="{Binding BackToParentViewModelCommand}">
+                        Click="BackToParentVM">
                     <iconPacks:PackIconModern Kind="ArrowLeft" />
                 </Button>
 

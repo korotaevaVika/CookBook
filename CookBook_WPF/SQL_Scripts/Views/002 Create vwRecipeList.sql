@@ -71,7 +71,7 @@ SELECT
 	, rcp.rQuantity as Quantity
 	, dbo.fnDefaultMeasureForProduct(prd.nKey) as Measure
 	, dbo.fnNumberIngredientsInRecipe(rcp.nKey) as NumberIngredientsInRecipe
-	, COALESCE(rcp.szDescription, N'') as [Description]
+	, COALESCE(rcp.szDescription, N'') as Description
 FROM tbl_Recipe rcp
 INNER JOIN tbl_Product prd ON prd.nKey = rcp.nProduct_nKey
 go

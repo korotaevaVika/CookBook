@@ -1,7 +1,6 @@
 ﻿using CookBook_WPF.DataAccess;
 using CookBook_WPF.Helper_Classes;
 using System.Data;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System;
 using System.Windows;
@@ -50,18 +49,6 @@ namespace CookBook_WPF.ViewModel
             }
         }
 
-        //private DataView mProducts;
-        //public DataView Products
-        //{
-        //    get { return mProducts; }
-        //    set
-        //    {
-        //        mProducts = value;
-        //        LoadMeasures();
-        //        OnPropertyChanged();
-        //    }
-        //}
-
         private DataRowView mSelectedRecipe;
         public DataRowView SelectedRecipe
         {
@@ -74,24 +61,24 @@ namespace CookBook_WPF.ViewModel
                     LoadIngredients();
                     EditRecipe(null);
                 }
-                //mDeleteRecipeCommand.OnCanExecuteChanged();
+                mDeleteRecipeCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
 
 
-        private DataRowView mSelectedProduct;
-        public DataRowView SelectedProduct
+        private DataRowView mSelectedIngredient;
+        public DataRowView SelectedIngredient
         {
-            get { return mSelectedProduct; }
+            get { return mSelectedIngredient; }
             set
             {
-                mSelectedProduct = value;
+                mSelectedIngredient = value;
                 if (value != null)
                 {
-                    //  LoadMeasures();
+                    EditProduct(null);
                 }
-                //mDeleteIngredientCommand.OnCanExecuteChanged();
+                mDeleteIngredientCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -113,11 +100,11 @@ namespace CookBook_WPF.ViewModel
             set
             {
                 mSelectedMeasureProduct = value;
-                if (value != null)
-                {
-                    //LoadMeasures();
-                }
-                //mDeleteIngredientCommand.OnCanExecuteChanged();
+                //if (value != null)
+                //{
+                //    //LoadMeasures();
+                //}
+                ////mDeleteIngredientCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -250,7 +237,6 @@ namespace CookBook_WPF.ViewModel
             }
         }
 
-
         public int ProductKey
         {
             get { return mProductKey; }
@@ -285,6 +271,59 @@ namespace CookBook_WPF.ViewModel
         #endregion
 
         #region Other Properties
+        private List<Product> mProductsCollection;
+        public List<Product> ProductsCollection
+        {
+            get { return mProductsCollection; }
+            set
+            {
+                mProductsCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Product mSelectedProduct;
+        public Product SelectedProduct
+        {
+            get { return mSelectedProduct; }
+            set
+            {
+                mSelectedProduct = value;
+                if (value != null)
+                {
+                    ProductName = mSelectedProduct.szMaterialName;
+                    ProductKey = mSelectedProduct.nKey;
+                    LoadAvailableMeasuresForIngredientProduct();
+                    SelectedIngMeasure = AvailableMeasuresCollection.FirstOrDefault(x => x.nKey == SelectedIngMeasure?.nKey);
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        private List<Measure> mAvailableMeasuresCollection;
+        public List<Measure> AvailableMeasuresCollection
+        {
+            get { return mAvailableMeasuresCollection; }
+            set
+            {
+                mAvailableMeasuresCollection = value;
+                SelectedIngMeasure = AvailableMeasuresCollection?.
+                    FirstOrDefault(x => x.nKey == SelectedIngMeasure?.nKey);
+                OnPropertyChanged();
+            }
+        }
+        private Measure mSelectedIngMeasure;
+        public Measure SelectedIngMeasure
+        {
+            get { return mSelectedIngMeasure; }
+            set
+            {
+                mSelectedIngMeasure = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private string mMessage;
         public string Message
         {
@@ -340,7 +379,7 @@ namespace CookBook_WPF.ViewModel
                 RecipeKey,
                 RecipeName,
                 OutputProduct.nKey,
-                Portion, 
+                Portion,
                 Quantity,
                 Description,
                 ref mSuccess);
@@ -362,17 +401,19 @@ namespace CookBook_WPF.ViewModel
         private void SaveProduct(object obj)
         {
             bool mSuccess = false;
-            //Message = DateTime.Now.ToString() + "\t" +
-            //    _model.SaveIngredient(
-            //    ProductKey,
-            //    ProductName,
-
-            //    (int)SelectedRecipe.Row["RecipeKey"],
-            //     ref mSuccess);
+            Message = DateTime.Now.ToString() + "\t" +
+                _model.SaveIngredient(
+                RecipeKey,
+                mIngredientKey,
+                ProductKey,
+                SelectedIngMeasure.nKey,
+                IngredientQuantity,
+                ref mSuccess);
 
             if (mSuccess)
             {
                 IsIngredientEdited = false;
+                LoadIngredients();
             }
             else MessageBox.Show(Message, "Error");
 
@@ -383,7 +424,7 @@ namespace CookBook_WPF.ViewModel
         }
         private bool CanDeleteIngredient(object obj)
         {
-            return SelectedProduct != null;
+            return SelectedIngredient != null;
         }
         private void AddRecipe(object obj)
         {
@@ -414,11 +455,11 @@ namespace CookBook_WPF.ViewModel
         private void DeleteRecipe(object obj)
         {
             bool mSuccess = false;
-            // Message = _model.DeleteRecipe((int)SelectedRecipe.Row["RecipeKey"], ref mSuccess);
-            Recipes = _model.GetRecipes();
+            Message = _model.DeleteRecipe(RecipeKey, ref mSuccess);
             if (mSuccess)
             {
                 IsRecipeEdited = false;
+                LoadRecipes();
             }
             else MessageBox.Show(Message, "Error");
 
@@ -431,27 +472,40 @@ namespace CookBook_WPF.ViewModel
             mProductKey = 0;
             mIngredientKey = 0;
             ProductName = null;
-
+            IngredientQuantity = 0;
+            LoadProducts();
+            AvailableMeasuresCollection = null;
+            SelectedIngMeasure = null;
         }
 
         private void EditProduct(object obj)
         {
             IsIngredientEdited = true;
             IsRecipeEdited = false;
-            mIngredientKey = (int)SelectedProduct.Row["IngredientKey"];
-            mProductKey = (int)SelectedProduct.Row["ProductKey"];
-            ProductName = (string)SelectedProduct.Row["ProductName"];
+            mIngredientKey = (int)SelectedIngredient.Row["IngredientKey"];
+            mProductKey = (int)SelectedIngredient.Row["ProductKey"];
+            ProductName = (string)SelectedIngredient.Row["ProductName"];
+            IngredientQuantity = (double)SelectedIngredient.Row["Quantity"];
+            
+            LoadProducts();
+            SelectedProduct = ProductsCollection.FirstOrDefault(x => x.nKey == mProductKey);
+
+            SelectedIngMeasure = AvailableMeasuresCollection.FirstOrDefault(
+                x => x.nKey == (int)SelectedIngredient.Row["MeasureKey"]);
 
         }
 
         private void DeleteIngredient(object obj)
         {
             bool mSuccess = false;
-            //Message = _model.DeleteIngredient((int)SelectedProduct.Row["IngredientKey"], ref mSuccess);
+            Message = _model.DeleteIngredient(
+                mIngredientKey,
+                ref mSuccess);
 
             if (mSuccess)
             {
                 IsIngredientEdited = false;
+                LoadIngredients();
             }
             else MessageBox.Show(Message, "Error");
         }
@@ -461,19 +515,50 @@ namespace CookBook_WPF.ViewModel
         #region Other Methods
 
         #endregion
-        //private void LoadProducts()
-        //{
-        //    Products = _model.GetProducts((int)SelectedGroup.Row["GroupKey"]);
-        //}
+        private void LoadRecipes()
+        {
+            Recipes = _model.GetRecipes();
+        }
+
         private void LoadIngredients()
         {
-            //Products = _model.GetIngredients((int)SelectedRecipe.Row["RecipeKey"]);
-
+            Ingredients = _model.GetIngredients((int)SelectedRecipe.Row["RecipeKey"]);
         }
         private void LoadOutputProducts()
         {
             OutputProductsCollection = _model.GetOutputProducts();
-            //MeasureProducts = _model.GetMeasures((int)SelectedProduct.Row["RecipeKey"], 0);
         }
+        private void LoadProducts()
+        {
+            DataTable dt = _model.GetProducts(RecipeKey, mIngredientKey).Table;
+            var test = new List<Product>();
+            foreach (DataRow row in dt.Rows)
+            {
+                var obj = new Product
+                {
+                    szMaterialName = (string)row["ProductName"],
+                    nKey = (int)row["ProductKey"]
+                };
+                test.Add(obj);
+            };
+            ProductsCollection = test;
+        }
+
+        private void LoadAvailableMeasuresForIngredientProduct()
+        {
+            DataTable dt = _model.GetMeasures(ProductKey, 0).Table;
+            var test = new List<Measure>();
+            foreach (DataRow row in dt.Rows)
+            {
+                var obj = new Measure
+                {
+                    szMeasureName = (string)row["MeasureName"],
+                    nKey = (int)row["MeasureKey"]
+                };
+                test.Add(obj);
+            };
+            AvailableMeasuresCollection = test;
+        }
+
     }
 }

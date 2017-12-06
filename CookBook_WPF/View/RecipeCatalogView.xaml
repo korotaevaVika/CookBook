@@ -38,22 +38,34 @@
                   Style="{StaticResource AzureDataGrid}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Ключ" Binding="{Binding RecipeKey}" Visibility="Hidden" />
-                <DataGridTextColumn Header="Название" Binding="{Binding RecipeName}" />
-                <DataGridTextColumn Header="№ продуктов" Binding="{Binding NumberIngredientsInRecipe}" />
-                <DataGridTextColumn Header="№ порций" Binding="{Binding Portion}" />
-                <DataGridTextColumn Header="№ [ЕИ]" Binding="{Binding Quantity}" />
-                <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
+                <DataGridTextColumn Width="150" Header="Название" Binding="{Binding RecipeName}" />
+                <DataGridTextColumn Width="150" Header="" Binding="{Binding ProductName}" />
+                <DataGridTextColumn Width="30" Header="№ продуктов" Binding="{Binding NumberIngredientsInRecipe}" />
+                <DataGridTextColumn Width="30" Header="№ порций" Binding="{Binding Portion}" />
+                <DataGridTextColumn Width="30" Header="№ [ЕИ]" Binding="{Binding Quantity}" />
                 <DataGridTextColumn Header="ЕИ" Binding="{Binding Measure}" Visibility="Visible"/>
+                <DataGridTextColumn Width="150" Header="Описание" Binding="{Binding Description}" />
             </DataGrid.Columns>
         </DataGrid>
 
         <DataGrid Grid.Column="3" Grid.Row="2"
                   CanUserAddRows="False"
-                  ItemsSource="{Binding Ingredients}" Margin="5"
-                  AutoGenerateColumns="True"
+                  ItemsSource="{Binding Ingredients, UpdateSourceTrigger=PropertyChanged}" Margin="5"
+                  AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedIngredient, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   BorderThickness="1"
                   Style="{StaticResource AzureDataGrid}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Ключ" Binding="{Binding IngredientKey}" Visibility="Hidden" />
+                <DataGridTextColumn Width="3*" Header="Продукт" Binding="{Binding ProductName}" />
+                <DataGridTextColumn Width="1*" Header="Кол-во" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Width="1*" Header="ЕИ" Binding="{Binding MeasureName}" />
+
+                <DataGridTextColumn Width="40" Header="Ккал" Binding="{Binding Energy}" />
+                <DataGridTextColumn Width="30" Header="Б" Binding="{Binding Protein}" />
+                <DataGridTextColumn Width="30" Header="Ж" Binding="{Binding Fat}" />
+                <DataGridTextColumn Width="30" Header="У" Binding="{Binding Carbohydrates}" />
+            </DataGrid.Columns>
         </DataGrid>
 
         <StackPanel Orientation="Horizontal" 
@@ -146,14 +158,23 @@
                     Grid.Row="1" Grid.Column="0" 
                     Margin="5"
                     Text="Combo - Products:"/>
-                <Controls:SplitButton 
+                <ComboBox
                      Grid.Row="1" Grid.Column="2" 
                     Margin="5"
+                    
+                    IsReadOnly="False"
+                    IsEnabled="True"
+                    IsEditable="True"
+                    
+                    IsTextSearchCaseSensitive="False"
+                    IsTextSearchEnabled="True"
+                    
                     HorizontalContentAlignment="Left"
                     HorizontalAlignment="Stretch"
                     VerticalContentAlignment="Center"
                     ItemsSource="{Binding OutputProductsCollection}"
                     DisplayMemberPath="szMaterialName"
+                    
                     VerticalAlignment="Center" 
                   SelectedItem="{Binding OutputProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
@@ -165,15 +186,13 @@
                     Grid.Row="2" Grid.Column="2" 
                     Margin="5"
                     Orientation="Horizontal">
-                    
+
                     <Controls:NumericUpDown
-                        Margin="5"
                         Value="{Binding Portion, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         Minimum="0" Maximum="100"
                         Interval="0.5" StringFormat="N1"
                         HorizontalAlignment="Stretch"/>
                     <Controls:NumericUpDown
-                        Margin="5"
                         Value="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         Minimum="0" Maximum="10000"
                         Interval="10" StringFormat="N2"
@@ -207,7 +226,7 @@
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsProductEdited, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                        <DataTrigger Binding="{Binding IsIngredientEdited, UpdateSourceTrigger=PropertyChanged}" Value="True">
                             <DataTrigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard >
@@ -248,52 +267,98 @@
                 <TextBlock         
                     Grid.Row="0" Grid.Column="0" 
                     Margin="5"
-                    Text="Наименование:"/>
-                <TextBox       
+                    Text="Продукт:"/>
+
+                <ComboBox 
                     Grid.Row="0" Grid.Column="2" 
                     Margin="5"
+                     
+                    IsReadOnly="False"
+                    IsEnabled="True"
+                    IsEditable="True"
+                    
+                    IsTextSearchCaseSensitive="False"
+                    IsTextSearchEnabled="True"
+
+                    HorizontalContentAlignment="Left"
                     HorizontalAlignment="Stretch"
-                    Controls:TextBoxHelper.ClearTextButton="True"
-                    Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                    />
+                    Width="120"
+                    VerticalContentAlignment="Center"
+                    ItemsSource="{Binding ProductsCollection, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    DisplayMemberPath="szMaterialName"
+                    SelectedItem="{Binding SelectedProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    VerticalAlignment="Center"/>
+
+                <TextBlock         
+                    Grid.Row="1" Grid.Column="0" 
+                    Margin="5"
+                    Text="ЕИ:"/>
+
+                <ComboBox 
+                    Grid.Row="1" Grid.Column="2" 
+                    Margin="5"
+                     
+                    IsReadOnly="False"
+                    IsEnabled="True"
+                    IsEditable="True"
+                    
+                    IsTextSearchCaseSensitive="False"
+                    IsTextSearchEnabled="True"
+
+                    HorizontalContentAlignment="Left"
+                    HorizontalAlignment="Stretch"
+                    Width="120"
+                    VerticalContentAlignment="Center"
+                    ItemsSource="{Binding AvailableMeasuresCollection, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    DisplayMemberPath="szMeasureName"
+                    SelectedItem="{Binding SelectedIngMeasure, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    VerticalAlignment="Center"/>
+
+                <TextBlock         
+                    Grid.Row="2" Grid.Column="0" 
+                    Margin="5"
+                    Text="Кол-во:"/>
+                <Controls:NumericUpDown
+                     Grid.Row="2" Grid.Column="2" 
+                        Value="{Binding IngredientQuantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Minimum="0" Maximum="10000"
+                        Interval="10" StringFormat="N2"
+                        HorizontalAlignment="Stretch"/>
 
                 <TextBlock         
                     Grid.Row="0" Grid.Column="3" 
                     Margin="5"
                     Text="Протеин:"/>
-                <Controls:NumericUpDown
+                <TextBlock
                     Margin="5"
-                    Value="{Binding Protein, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    IsEnabled="False"
+                    Text="{Binding Protein, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Grid.Row="0" Grid.Column="5" 
-                    Minimum="0" Maximum="10000"
-                    Interval="5" StringFormat="N4"
                     HorizontalAlignment="Stretch"/>
 
                 <TextBlock         
                     Grid.Row="1" Grid.Column="3" 
                     Margin="5"
                     Text="Жиры:"/>
-                <Controls:NumericUpDown
+                <TextBlock
                     Margin="5"
-                    Value="{Binding Fat, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    IsEnabled="False"
+                    Text="{Binding Fat, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Grid.Row="1" Grid.Column="5" 
-                    Minimum="0" Maximum="10000"
-                    Interval="5" StringFormat="N4"
                     HorizontalAlignment="Stretch"/>
 
                 <TextBlock         
                     Grid.Row="2" Grid.Column="3" 
                     Margin="5"
                     Text="Углеводы:"/>
-                <Controls:NumericUpDown
+                <TextBlock
                     Margin="5"
-                    Value="{Binding Carbohydrates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    IsEnabled="False"
+                    Text="{Binding Carbohydrates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Grid.Row="2" Grid.Column="5" 
-                    Minimum="0" Maximum="10000"
-                    Interval="5" StringFormat="N4"
                     HorizontalAlignment="Stretch"/>
 
-                <TextBlock         
+                <!--<TextBlock         
                     Grid.Row="3" Grid.Column="3" 
                     Margin="5"
                     Text="Подсчет ккал автоматически:"/>
@@ -302,19 +367,18 @@
                     Margin="5"
                     IsChecked="{Binding AutoCountEnergy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     OnLabel="Да" OffLabel="Нет"
-                    HorizontalAlignment="Left"/>
+                    HorizontalAlignment="Left"/>-->
 
                 <TextBlock         
-                    Grid.Row="1" Grid.Column="0" 
+                    Grid.Row="3" Grid.Column="3" 
                     Margin="5"
                     Text="Энергетическая ценность:"/>
-                <Controls:NumericUpDown
+                <TextBlock
                     Margin="5"
-                    Value="{Binding Energy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    Grid.Row="1" Grid.Column="2" 
+                    IsEnabled="False"
+                    Text="{Binding Energy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Grid.Row="3" Grid.Column="5" 
                     Controls:TextBoxHelper.ClearTextButton="True"
-                    Minimum="0" Maximum="10000"
-                    Interval="5" StringFormat="N4"
                     HorizontalAlignment="Stretch"/>
             </Grid>
         </Border>

@@ -43,7 +43,7 @@
                         <MenuItem Name="ChangeWindowMU" Header="Окна">
                             <MenuItem Name="ProductsMU" Header="Продукты" Command="{Binding ShowProductCatalogCommand}"/>
                             <MenuItem Name="RecipesMU" Header="Рецепты"  Command="{Binding ShowRecipeCatalogCommand}"/>
-                            <MenuItem Name="PlansMU" Header="Планы"/>
+                            <MenuItem Name="PlansMU" Header="Планы" Command="{Binding ShowPlanCatalogCommand}"/>
                             <MenuItem Name="BasketsMU" Header="Корзина"/>
                         </MenuItem>
                     </Menu>
@@ -63,6 +63,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:MeasureProductRelationViewModel}">
             <views:MeasureProductRelationControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PlanCatalogViewModel}">
+            <views:PlanCatalogView/>
         </DataTemplate>
     </Window.Resources>
     <Grid>

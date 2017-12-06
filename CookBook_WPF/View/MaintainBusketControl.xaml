@@ -1,0 +1,99 @@
+﻿<Controls:MetroWindow x:Class="CookBook_WPF.View.MaintainBusketControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CookBook_WPF.View"
+        xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        dialogs:DialogParticipation.Register="{Binding}"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        WindowStyle="ToolWindow"
+        xmlns:vm="clr-namespace:CookBook_WPF.ViewModel"
+        WindowStartupLocation="CenterScreen" 
+        mc:Ignorable="d"           
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+
+        Title="Добавить планы в корзину" Height="300" Width="300"
+                       ShowTitleBar="True"
+                       ShowMaxRestoreButton="True"
+                       ResizeMode="CanMinimize"
+                       ShowCloseButton="False"
+                      BorderBrush="{DynamicResource AccentColorBrush}"
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      BorderThickness="1"
+                      >
+    <Controls:MetroWindow.DataContext>
+        <vm:MaintainBusketViewModel/>
+    </Controls:MetroWindow.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel 
+            Orientation="Horizontal" 
+            Grid.Row="0"
+            HorizontalAlignment="Stretch"
+            >
+                    <Button Style="{DynamicResource MetroCircleButtonStyle}" 
+                    Width="30" Height="30" 
+                        Click="BackToParentVM">
+                        <iconPacks:PackIconModern Kind="ArrowLeft" />
+                    </Button>
+                    <TextBlock Text="Сформировать новую корзину" Margin="5"
+                           FontStyle="Italic"
+                           HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <DatePicker Grid.Row="1" Margin="0, 5" SelectedDate="{Binding SelectedDate}"/>
+                <TextBox Grid.Row="2" Margin="0, 5" Text="{Binding Description}"
+                         Controls:TextBoxHelper.ClearTextButton="True"/>
+                <Button Grid.Row="3" Margin="0, 5" Content="Создать" Click="CreateBasket"/>
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Добавить в существующую корзину" Margin="5" 
+                           FontStyle="Italic"
+                           HorizontalAlignment="Center"/>
+                <ComboBox
+                     Grid.Row="1"
+                    Margin="0, 5"
+                    
+                    IsReadOnly="False"
+                    IsEnabled="True"
+                    IsEditable="True"
+                    
+                    IsTextSearchCaseSensitive="False"
+                    IsTextSearchEnabled="True"
+                    
+                    HorizontalContentAlignment="Left"
+                    HorizontalAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    ItemsSource="{Binding Buckets}"
+                    SelectedItem="{Binding SelectedBasket, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    DisplayMemberPath="szDisplayText"
+                    VerticalAlignment="Top"/>
+                <Button Grid.Row="2" Margin="0, 5" Content="Выбрать" Click="AddPlansToExistingBasket"/>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Controls:MetroWindow>

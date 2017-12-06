@@ -1,46 +1,52 @@
-USE dbCookBook
+/*    ==Параметры сценариев==
 
+    Версия исходного сервера : SQL Server 2016 (13.0.4206)
+    Выпуск исходного ядра СУБД : Выпуск Microsoft SQL Server Express Edition
+    Тип исходного ядра СУБД : Изолированный SQL Server
+
+    Версия целевого сервера : SQL Server 2017
+    Выпуск целевого ядра СУБД : Выпуск Microsoft SQL Server Standard Edition
+    Тип целевого ядра СУБД : Изолированный SQL Server
+*/
+
+USE [dbCookBook]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SelectIngredients]    Script Date: 25.11.2017 22:29:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-/********************************************************************************
-
-  Имя     : 
-  sp_SelectProducts
-  
-  Возвращает:
-		ProductKey				Ключ продукта
-		ProductName				Название продукта
-		Energy					Энергетическая ценность
-		Protein					Белок
-		Fat						Жиры
-		Carbohydrates			Углеводы
-
-  История изменений: 
-             24.10.2017, VKo, Создание
-
-********************************************************************************/
-if not exists (select * from dbo.sysobjects where id = object_id(N'sp_SelectProducts') 
+if not exists (select * from dbo.sysobjects where id = object_id(N'sp_SelectIngredients') 
 		and objectproperty(id, N'IsProcedure') = 1)
-  execute (N'create procedure sp_SelectProducts as begin return end')
+  execute (N'create procedure sp_SelectIngredients as begin select 0 end')
 go
 
-ALTER PROCEDURE sp_SelectProducts 
+
+ALTER PROCEDURE [dbo].[sp_SelectIngredients] 
 	-- Add the parameters for the stored procedure here
-	@pGroupKey int = 0
+	@pRecipeKey int = 0
 AS
 BEGIN
 	SELECT 
-	  nKey as ProductKey
-	, szMaterialName as ProductName
-	, rEnergy as Energy
-	, rProtein as Protein
-	, rFat as Fat
-	, rCarbohydrate as Carbohydrates FROM  tbl_Product 
-	WHERE nMaterialGroup_nKey = @pGroupKey
+	  ing.nKey as IngredientKey
+	, ing.nMeasureProduct_nKey as MeasureProdRelationKey
+	, pr.nKey as ProductKey
+	, pr.szMaterialName as ProductName
+	, msr.nKey as MeasureKey
+	, msr.szMeasureName as MeasureName
+	, ing.rQuantity as Quantity
+	, ROUND(CAST(mpr.rQuantity*pr.rEnergy*ing.rQuantity as float), 1)  as Energy
+	, ROUND(CAST(mpr.rQuantity*pr.rProtein*ing.rQuantity as float), 1)  as Protein
+	, ROUND(CAST(mpr.rQuantity*pr.rFat*ing.rQuantity as float), 1)  as Fat
+	, ROUND(CAST(mpr.rQuantity*pr.rCarbohydrate*ing.rQuantity as float), 1)  as Carbohydrates
+
+	 FROM  tbl_Ingredient ing
+	 INNER JOIN tbl_MeasureProductRelation mpr on mpr.nKey  =  ing.nMeasureProduct_nKey
+	 INNER JOIN tbl_Product pr on pr.nKey  = mpr.nProduct_nKey
+	 INNER JOIN tbl_Measure msr on msr.nKey  = mpr.nMeasure_nKey
+
+	 WHERE nRecipe_nKey = @pRecipeKey
+
 		
 END
-GO
-

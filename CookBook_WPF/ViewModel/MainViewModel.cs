@@ -1,13 +1,4 @@
 ﻿using CookBook_WPF.Helper_Classes;
-using CookBook_WPF.View;
-using MahApps.Metro.Controls.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace CookBook_WPF.ViewModel
@@ -25,12 +16,16 @@ namespace CookBook_WPF.ViewModel
         #region Commands
         private readonly RelayCommand mShowProductCatalogCommand;
         private readonly RelayCommand mShowRecipeCatalogCommand;
+        private readonly RelayCommand mShowPlanCatalogCommand;
         public ICommand ShowProductCatalogCommand { get { return mShowProductCatalogCommand; } }
         public ICommand ShowRecipeCatalogCommand { get { return mShowRecipeCatalogCommand; } }
+        public ICommand ShowPlanCatalogCommand { get { return mShowPlanCatalogCommand; } }
         #endregion
         public MainViewModel()
         {
-            CurrentViewModel = new ProductCatalogViewModel();
+            CurrentViewModel = new PlanCatalogViewModel();
+            //CurrentViewModel = new ProductCatalogViewModel();
+           
             //CurrentViewModel = new MeasureProductRelationViewModel(
             //    new MeasureProductRelationViewModel.MeasureProductRelationInfo
             //    {
@@ -38,12 +33,11 @@ namespace CookBook_WPF.ViewModel
             //        mainMeasureValueKey = 7,
             //        ParentViewModel = new ProductCatalogViewModel(new DialogCoordinator())
             //    });
-           // CurrentViewModel = new ProductCatalogViewModel();
 
-            //DialogWindow wn = new DialogWindow();
-            
+
             mShowProductCatalogCommand = new RelayCommand(ShowProductCatalog);
             mShowRecipeCatalogCommand = new RelayCommand(ShowRecipeCatalog);
+            mShowPlanCatalogCommand = new RelayCommand(ShowPlanCatalog);
 
         }
 
@@ -55,6 +49,10 @@ namespace CookBook_WPF.ViewModel
         private void ShowProductCatalog(object obj)
         {
             CurrentViewModel = new ProductCatalogViewModel();
+        }
+        private void ShowPlanCatalog(object obj)
+        {
+            CurrentViewModel = new PlanCatalogViewModel();
         }
     }
 }

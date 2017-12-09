@@ -20,7 +20,7 @@ namespace CookBook_WPF.Data
         [Required]
         public virtual MeasureProductRelation nMeasureProduct { get; set; }
         public double rQuantity { get; set; }
-        //public double rPie { get; set; }
+        public double rPie { get; set; }
         
     }
 }

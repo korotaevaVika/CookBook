@@ -62,6 +62,7 @@ namespace CookBook_WPF.ViewModel
                     EditRecipe(null);
                 }
                 mDeleteRecipeCommand.OnCanExecuteChanged();
+                mAddIngredientCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -76,6 +77,8 @@ namespace CookBook_WPF.ViewModel
                 mSelectedIngredient = value;
                 if (value != null)
                 {
+                    IsIngredientEdited = true;
+
                     EditProduct(null);
                 }
                 mDeleteIngredientCommand.OnCanExecuteChanged();
@@ -100,11 +103,6 @@ namespace CookBook_WPF.ViewModel
             set
             {
                 mSelectedMeasureProduct = value;
-                //if (value != null)
-                //{
-                //    //LoadMeasures();
-                //}
-                ////mDeleteIngredientCommand.OnCanExecuteChanged();
                 OnPropertyChanged();
             }
         }
@@ -344,7 +342,7 @@ namespace CookBook_WPF.ViewModel
             mEditRecipeCommand = new RelayCommand(EditRecipe);
             mDeleteRecipeCommand = new RelayCommand(DeleteRecipe, CanDeleteRecipe);
             mSaveRecipeCommand = new RelayCommand(SaveRecipe, CanSaveRecipe);
-            mAddIngredientCommand = new RelayCommand(AddProduct);
+            mAddIngredientCommand = new RelayCommand(AddProduct, CanAddProduct);
             mEditIngredientCommand = new RelayCommand(EditProduct);
             mDeleteIngredientCommand = new RelayCommand(DeleteIngredient, CanDeleteIngredient);
             mSaveIngredientCommand = new RelayCommand(SaveProduct, CanSaveProduct);
@@ -357,13 +355,13 @@ namespace CookBook_WPF.ViewModel
         #region Methods For Commands
         private void Save(object obj)
         {
+            if (IsIngredientEdited && CanSaveProduct(null))
+            {
+                SaveProduct(null);
+            }
             if (IsRecipeEdited && CanSaveRecipe(null))
             {
                 SaveRecipe(null);
-            }
-            else if (IsIngredientEdited && CanSaveProduct(null))
-            {
-                SaveProduct(null);
             }
         }
         private bool CanSaveRecipe(object obj)
@@ -395,7 +393,10 @@ namespace CookBook_WPF.ViewModel
         }
         private bool CanSaveProduct(object obj)
         {
-            return true;
+            return 
+                SelectedProduct != null && 
+                SelectedIngMeasure != null && 
+                IngredientQuantity != 0;
         }
 
         private void SaveProduct(object obj)
@@ -426,10 +427,15 @@ namespace CookBook_WPF.ViewModel
         {
             return SelectedIngredient != null;
         }
+        private bool CanAddProduct(object obj)
+        {
+            return SelectedRecipe != null;
+        }
+        
         private void AddRecipe(object obj)
         {
-            IsRecipeEdited = true;
             IsIngredientEdited = false;
+            IsRecipeEdited = true;
             RecipeKey = 0;
             RecipeName = string.Empty;
             OutputProduct = null;
@@ -468,7 +474,6 @@ namespace CookBook_WPF.ViewModel
         private void AddProduct(object obj)
         {
             IsIngredientEdited = true;
-            IsRecipeEdited = false;
             mProductKey = 0;
             mIngredientKey = 0;
             ProductName = null;
@@ -480,8 +485,6 @@ namespace CookBook_WPF.ViewModel
 
         private void EditProduct(object obj)
         {
-            IsIngredientEdited = true;
-            IsRecipeEdited = false;
             mIngredientKey = (int)SelectedIngredient.Row["IngredientKey"];
             mProductKey = (int)SelectedIngredient.Row["ProductKey"];
             ProductName = (string)SelectedIngredient.Row["ProductName"];

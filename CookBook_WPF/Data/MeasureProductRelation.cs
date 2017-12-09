@@ -18,6 +18,7 @@ namespace CookBook_WPF.Data
         public virtual Product nProduct { get; set; }
         public virtual Measure nMeasure { get; set; }
         public bool bIsDefault { get; set; }
+        public bool bIsForPurchase { get; set; }
         [Required]
         public double rQuantity { get; set; }
     }

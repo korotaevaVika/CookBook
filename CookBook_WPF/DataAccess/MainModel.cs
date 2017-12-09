@@ -179,7 +179,7 @@ namespace CookBook_WPF.DataAccess
                         plans.AddRange(dbContext.Plans.Where(x => plansIndexes.Contains(x.nKey)));
 
                         b.Plans.Clear();
-                        b.Plans = plans; 
+                        b.Plans = plans;
                         dbContext.SaveChanges();
                     }
                     mSuccess = true;
@@ -235,7 +235,7 @@ namespace CookBook_WPF.DataAccess
                     //обход существующих и изменение их количества
                     var existingMeasures = dbContext.MeasureProductRelations.
                         Include(x => x.nProduct).
-                        Where(x => x.nProduct.nKey == productKey && x.bIsDefault).ToList();
+                        Where(x => x.nProduct.nKey == productKey && !x.bIsDefault).ToList();
 
                     bool isError = false;
                     measureProductWrappers.
@@ -245,10 +245,14 @@ namespace CookBook_WPF.DataAccess
                        {
                            try
                            {
-                               existingMeasures.FirstOrDefault(v => v.nKey == x.MeasureProductKey).rQuantity =
-                               x.Proportion.HasValue ? x.Proportion.Value : (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value);
+                               existingMeasures.FirstOrDefault(v => v.nKey == x.MeasureProductKey).
+                                   rQuantity = x.Proportion.HasValue ? 
+                                        x.Proportion.Value :
+                                        (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value);
+                               existingMeasures.FirstOrDefault(v => v.nKey == x.MeasureProductKey).
+                                    bIsForPurchase = x.IsForPurchase;
                            }
-                           catch
+                           catch(Exception ex)
                            {
                                isError = true;
                                //throw;
@@ -281,7 +285,8 @@ namespace CookBook_WPF.DataAccess
                                        nProduct = pr,
                                        rQuantity = x.Proportion.HasValue ?
                                                 x.Proportion.Value :
-                                                (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value)
+                                                (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value),
+                                       bIsForPurchase = x.IsForPurchase
                                    });
                                dbContext.SaveChanges();
                            }
@@ -859,8 +864,8 @@ namespace CookBook_WPF.DataAccess
                                     MeasureProductKey = x.nKey,
                                     MainMeasureName = mainMeasure.nMeasure.szMeasureName,
                                     MainMeasureKey = mainMeasureKey,
+                                    IsForPurchase = x.bIsForPurchase,
                                     IsChanged = false
-
                                 });
                         });
 
@@ -883,6 +888,7 @@ namespace CookBook_WPF.DataAccess
                                     MeasureProductKey = 0,
                                     MainMeasureName = mainMeasure.nMeasure.szMeasureName,
                                     MainMeasureKey = mainMeasureKey,
+                                    IsForPurchase = false,
                                     IsChanged = false
                                 });
                         });

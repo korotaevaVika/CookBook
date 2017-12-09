@@ -5,9 +5,19 @@ namespace CookBook_WPF.Helper_Classes.DataWrappers
     public class MeasureProductWrapper : BindableBase
     {
         public int MeasureProductKey { get; set; }
+        private bool mIsForPurchase;
+        public bool IsForPurchase
+        {
+            get { return mIsForPurchase; }
+            set { mIsForPurchase = value; IsChanged = true;  OnPropertyChanged();  }
+        }
 
         private double? mProportion;
-        public double? Proportion { get { return mProportion; } set { mProportion = value; IsChanged = true; OnPropertyChanged(); } }
+        public double? Proportion
+        {
+            get { return mProportion; }
+            set { mProportion = value; IsChanged = true; OnPropertyChanged(); }
+        }
 
         private double? mCurrentMeasureQuantity;
         public double? CurrentMeasureQuantity

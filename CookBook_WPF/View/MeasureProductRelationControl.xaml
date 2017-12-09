@@ -74,19 +74,21 @@
                         <DataTemplate>
                             <StackPanel Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrush}}" Orientation="Horizontal">
                                 <CheckBox IsChecked="{Binding IsSaved}"/>
-                                <TextBox
-                                    Text="{Binding CurrentMeasureQuantity}" 
-                                    FontWeight="Bold"
+                                <Controls:NumericUpDown
+                                    Value="{Binding CurrentMeasureQuantity}" 
+                                    FontWeight="Bold" Width="100"
                                     Margin="5, 0"/>
-                                <TextBlock Text="{Binding MeasureName}" Width="40"/>
-                                <TextBlock Text="&lt; ->" Width="30" TextAlignment="Center"/>
-                                <TextBlock Text="{Binding MainMeasureName}" Width="40" />
-
-                                <TextBox Text="{Binding MainMeasureQuantity}"
-                                         FontWeight="Bold"
+                                <TextBlock Text="{Binding MeasureName}" Width="50"/>
+                                <TextBlock Text="&lt; -> " Width="30" TextAlignment="Center"/>
+                                <Controls:NumericUpDown Value="{Binding MainMeasureQuantity}"
+                                         FontWeight="Bold" Width="100" 
                                          Margin="5, 0"/>
-                                <TextBlock Text=" Пропорция - > " TextAlignment="Center"/>
-                                <TextBox Text="{Binding Proportion}"  Width="40"/>
+                                <TextBlock Text="{Binding MainMeasureName}" Width="50" />
+                                <CheckBox Content="Использовать ЕИ для покупок" 
+                                          IsChecked="{Binding IsForPurchase}"/>
+
+                                <TextBlock Text=" Пропорция - > " TextAlignment="Center" Visibility="Hidden"/>
+                                <TextBox Text="{Binding Proportion}"  Width="40"  Visibility="Hidden"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

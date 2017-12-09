@@ -393,9 +393,9 @@ namespace CookBook_WPF.ViewModel
         }
         private bool CanSaveProduct(object obj)
         {
-            return 
-                SelectedProduct != null && 
-                SelectedIngMeasure != null && 
+            return
+                SelectedProduct != null &&
+                SelectedIngMeasure != null &&
                 IngredientQuantity != 0;
         }
 
@@ -431,7 +431,7 @@ namespace CookBook_WPF.ViewModel
         {
             return SelectedRecipe != null;
         }
-        
+
         private void AddRecipe(object obj)
         {
             IsIngredientEdited = false;
@@ -466,6 +466,8 @@ namespace CookBook_WPF.ViewModel
             {
                 IsRecipeEdited = false;
                 LoadRecipes();
+                Ingredients = null;
+                SelectedIngredient = null;
             }
             else MessageBox.Show(Message, "Error");
 
@@ -489,7 +491,7 @@ namespace CookBook_WPF.ViewModel
             mProductKey = (int)SelectedIngredient.Row["ProductKey"];
             ProductName = (string)SelectedIngredient.Row["ProductName"];
             IngredientQuantity = (double)SelectedIngredient.Row["Quantity"];
-            
+
             LoadProducts();
             SelectedProduct = ProductsCollection.FirstOrDefault(x => x.nKey == mProductKey);
 

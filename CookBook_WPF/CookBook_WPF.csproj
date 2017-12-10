@@ -51,8 +51,10 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -78,6 +80,7 @@
     <Compile Include="Converters\CheckBoxConverter.cs" />
     <Compile Include="DataAccess\MainModel.cs" />
     <Compile Include="Helper Classes\DataWrappers\MeasureProductWrapper.cs" />
+    <Compile Include="Helper Classes\DGVPrinter.cs" />
     <Compile Include="Helper Classes\RelayCommand.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModel\BindableBase.cs" />
@@ -175,15 +178,17 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SQL_Scripts\Triggers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="SQL_Scripts\Data\Init MaterialGroup and Products.sql" />
     <Content Include="SQL_Scripts\Functions\001 Create fnCountEnergyValue.sql" />
+    <Content Include="SQL_Scripts\Functions\002 Create fnDefaultMeasureKeyForProduct.sql" />
     <Content Include="SQL_Scripts\Procedures\003 Create sp_SelectIngredients.sql" />
     <Content Include="SQL_Scripts\Procedures\002 Create sp_SelectMeasureValues.sql" />
     <Content Include="SQL_Scripts\Procedures\001 Create sp_SelectProducts.sql" />
+    <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdateIngredient.sql" />
+    <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdateMeasureProductRelation.sql" />
+    <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdatePlan.sql" />
     <Content Include="SQL_Scripts\Views\004 Create vwBasketList.sql" />
     <Content Include="SQL_Scripts\Views\003 Create vwPlanList.sql" />
     <Content Include="SQL_Scripts\Views\002 Create vwRecipeList.sql" />

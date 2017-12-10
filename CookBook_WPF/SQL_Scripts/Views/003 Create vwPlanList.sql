@@ -18,7 +18,8 @@ USE dbCookBook;
 
 		Portion		Количество порций готового блюда
 		RecipeQuantity	Количество готового блюда в единицах готового блюда в рецепте
-		
+		HasBasket	True, если план учтен в корзине
+
 		Measure		ЕИ готового блюда
 
   История изменений: 
@@ -53,6 +54,11 @@ SELECT
 	 dbo.fnDefaultMeasureForProduct(prd.nKey),
 	  N'/', CONVERT(int,  (pln.rQuantity/rcp.rQuantity)) , N'порций')
 		 as [Description]
+	, (CASE
+		WHEN pln.Basket_nKey IS NULL
+			THEN 0
+			ELSE 1
+		END) as HasBasket
 FROM tbl_Plan pln
 INNER JOIN tbl_Recipe rcp ON rcp.nKey = pln.nRecipe_nKey
 INNER JOIN tbl_Product prd ON prd.nKey = pln.nProduct_nKey

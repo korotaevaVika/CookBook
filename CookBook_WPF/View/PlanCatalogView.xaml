@@ -59,6 +59,18 @@
                   AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedPlan, UpdateSourceTrigger=PropertyChanged}"
                   Style="{StaticResource AzureDataGrid}">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=HasBasket}" Value="1">
+                            <Setter Property="Background" Value="MediumPurple"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=HasBasket}" Value="0">
+                            <Setter Property="Background" Value="MediumSeaGreen"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn IsReadOnly="False"
                                         Binding="{Binding Path=RowData.Row.IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -181,6 +193,7 @@
                 <DatePicker  Grid.Row="0" Grid.Column="1"  
                              HorizontalContentAlignment="Right"
                              SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                             DisplayDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                         Margin="5"/>
 
                 <TextBlock         

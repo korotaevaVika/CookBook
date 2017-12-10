@@ -527,7 +527,11 @@ namespace CookBook_WPF.ViewModel
 
         private void LoadIngredients()
         {
-            Ingredients = _model.GetIngredients((int)SelectedRecipe.Row["RecipeKey"]);
+            if (SelectedRecipe != null)
+            {
+                Ingredients = _model.GetIngredients((int)SelectedRecipe.Row["RecipeKey"]);
+            }
+            else Ingredients = null;
         }
         private void LoadOutputProducts()
         {

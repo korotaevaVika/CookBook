@@ -288,7 +288,7 @@ namespace CookBook_WPF.ViewModel
                 mPlanKey,
                 mSelectedProduct?.nKey ?? 0,
                 mSelectedRecipe?.nKey ?? 0,
-                mDate,
+                Date,
                 mQuantity,
                 ref mSuccess);
 
@@ -320,6 +320,7 @@ namespace CookBook_WPF.ViewModel
         private void EditPlan(object obj)
         {
             IsPlanEdited = true;
+            mPlanKey = (int)mSelectedPlan.Row["PlanKey"];
             SelectedProduct = OutputProductsCollection.FirstOrDefault(
                 x => x.nKey == (int)mSelectedPlan.Row["ProductKey"]);
             Quantity = (double)mSelectedPlan.Row["rQuantity"];

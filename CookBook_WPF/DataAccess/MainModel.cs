@@ -8,6 +8,8 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using CookBook_WPF.Helper_Classes.DataWrappers;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace CookBook_WPF.DataAccess
 {
@@ -76,6 +78,24 @@ namespace CookBook_WPF.DataAccess
                 return dt.AsDataView();
             }
         }
+
+        internal DataTable GetBasketReportData(int nBasketKey)
+        {
+            using (CookBookModel dbContext = Context)
+            {
+                DataTable dt = new DataTable();
+                dbContext.Database.Connection.Open();
+                var con = (SqlConnection)dbContext.Database.Connection;
+                var cmd = new SqlCommand("exec sp_SelectBasketReportData " +
+                    "  @pBasketKey = " + nBasketKey , con);
+                using (var rdr = cmd.ExecuteReader())
+                {
+                    dt.Load(rdr);
+                }
+                return dt;
+            }
+        }
+
         public DataView GetRecipes(int productKey)
         {
             using (CookBookModel dbContext = Context)
@@ -246,13 +266,13 @@ namespace CookBook_WPF.DataAccess
                            try
                            {
                                existingMeasures.FirstOrDefault(v => v.nKey == x.MeasureProductKey).
-                                   rQuantity = x.Proportion.HasValue ? 
+                                   rQuantity = x.Proportion.HasValue ?
                                         x.Proportion.Value :
                                         (x.CurrentMeasureQuantity.Value / x.MainMeasureQuantity.Value);
                                existingMeasures.FirstOrDefault(v => v.nKey == x.MeasureProductKey).
                                     bIsForPurchase = x.IsForPurchase;
                            }
-                           catch(Exception ex)
+                           catch (Exception ex)
                            {
                                isError = true;
                                //throw;

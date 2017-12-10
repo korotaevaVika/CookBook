@@ -143,7 +143,7 @@ namespace CookBook_WPF.ViewModel
 
         private bool CanMaintainBusket(object obj)
         {
-            return true;
+            return SelectedDate != null;
         }
 
         private void MaintainBusket(object obj)

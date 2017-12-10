@@ -42,6 +42,9 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -84,6 +87,7 @@
     <Compile Include="Helper Classes\RelayCommand.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModel\BindableBase.cs" />
+    <Compile Include="ViewModel\PrintBasketViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainVM.cs" />
     <Compile Include="ViewModel\MaintainBusketViewModel.cs" />
@@ -99,6 +103,9 @@
     </Compile>
     <Compile Include="View\PlanCatalogView.xaml.cs">
       <DependentUpon>PlanCatalogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PrintBasketControl.xaml.cs">
+      <DependentUpon>PrintBasketControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ProductCatalogView.xaml.cs">
       <DependentUpon>ProductCatalogView.xaml</DependentUpon>
@@ -141,6 +148,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\PrintBasketControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ProductCatalogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -169,6 +180,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Resource Include="Fonts\arial.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -183,6 +197,7 @@
     <Content Include="SQL_Scripts\Data\Init MaterialGroup and Products.sql" />
     <Content Include="SQL_Scripts\Functions\001 Create fnCountEnergyValue.sql" />
     <Content Include="SQL_Scripts\Functions\002 Create fnDefaultMeasureKeyForProduct.sql" />
+    <Content Include="SQL_Scripts\Procedures\004 Create sp_SelectBasketReportData.sql" />
     <Content Include="SQL_Scripts\Procedures\003 Create sp_SelectIngredients.sql" />
     <Content Include="SQL_Scripts\Procedures\002 Create sp_SelectMeasureValues.sql" />
     <Content Include="SQL_Scripts\Procedures\001 Create sp_SelectProducts.sql" />

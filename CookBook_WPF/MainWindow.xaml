@@ -44,7 +44,7 @@
                             <MenuItem Name="ProductsMU" Header="Продукты" Command="{Binding ShowProductCatalogCommand}"/>
                             <MenuItem Name="RecipesMU" Header="Рецепты"  Command="{Binding ShowRecipeCatalogCommand}"/>
                             <MenuItem Name="PlansMU" Header="Планы" Command="{Binding ShowPlanCatalogCommand}"/>
-                            <MenuItem Name="BasketsMU" Header="Корзина"/>
+                            <MenuItem Name="BasketsMU" Header="Распечатать список" Command="{Binding PrintBasketCommand}"/>
                         </MenuItem>
                     </Menu>
                 </StackPanel>

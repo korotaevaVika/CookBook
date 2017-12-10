@@ -47,7 +47,7 @@ SELECT
 
 	, (pln.rQuantity/rcp.rQuantity) as Portion
 	, rcp.rQuantity as RecipeQuantity
-	, 1 as IsSelected
+	, 0 as IsSelected
 	, CONCAT(
 	prd.szMaterialName, 
 	N' по рецепту "' , rcp.szRecipeName , N'", ', pln.rQuantity, 

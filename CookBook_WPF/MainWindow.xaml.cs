@@ -23,6 +23,35 @@ namespace CookBook_WPF
         public MainWindow()
         {
             InitializeComponent();
+            ProductsMU.Visibility = Visibility.Collapsed;
+            RecipesMU.Visibility = Visibility.Collapsed;
+            PlansMU.Visibility = Visibility.Collapsed;
+            BasketsMU.Visibility = Visibility.Collapsed;
+        }
+
+        private void Admin(object sender, RoutedEventArgs e)
+        {
+            txtRole.Text = "Администратор";
+            ProductsMU.Visibility = Visibility.Visible;
+            RecipesMU.Visibility = Visibility.Visible;
+            PlansMU.Visibility = Visibility.Visible;
+            BasketsMU.Visibility = Visibility.Visible;
+        }
+        private void Plan(object sender, RoutedEventArgs e)
+        {
+            txtRole.Text = "Планировщик";
+            ProductsMU.Visibility = Visibility.Collapsed;
+            RecipesMU.Visibility = Visibility.Collapsed;
+            PlansMU.Visibility = Visibility.Visible;
+            BasketsMU.Visibility = Visibility.Visible;
+        }
+        private void Recipe(object sender, RoutedEventArgs e)
+        {
+            txtRole.Text = "Хранитель рецептов";
+            ProductsMU.Visibility = Visibility.Visible;
+            RecipesMU.Visibility = Visibility.Visible;
+            PlansMU.Visibility = Visibility.Collapsed;
+            BasketsMU.Visibility = Visibility.Collapsed;
         }
     }
 }

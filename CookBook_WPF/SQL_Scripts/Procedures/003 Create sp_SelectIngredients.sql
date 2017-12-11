@@ -36,10 +36,10 @@ BEGIN
 	, msr.nKey as MeasureKey
 	, msr.szMeasureName as MeasureName
 	, ing.rQuantity as Quantity
-	, ROUND(CAST(mpr.rQuantity*pr.rEnergy*ing.rQuantity as float), 1)  as Energy
-	, ROUND(CAST(mpr.rQuantity*pr.rProtein*ing.rQuantity as float), 1)  as Protein
-	, ROUND(CAST(mpr.rQuantity*pr.rFat*ing.rQuantity as float), 1)  as Fat
-	, ROUND(CAST(mpr.rQuantity*pr.rCarbohydrate*ing.rQuantity as float), 1)  as Carbohydrates
+	, ROUND(CAST(pr.rEnergy*ing.rQuantity/(100*mpr.rQuantity) as float), 1)  as Energy
+	, ROUND(CAST(pr.rProtein*ing.rQuantity/(100*mpr.rQuantity) as float), 1)  as Protein
+	, ROUND(CAST(pr.rFat*ing.rQuantity/(100*mpr.rQuantity) as float), 1)  as Fat
+	, ROUND(CAST(pr.rCarbohydrate*ing.rQuantity/(100*mpr.rQuantity) as float), 1)  as Carbohydrates
 
 	 FROM  tbl_Ingredient ing
 	 INNER JOIN tbl_MeasureProductRelation mpr on mpr.nKey  =  ing.nMeasureProduct_nKey

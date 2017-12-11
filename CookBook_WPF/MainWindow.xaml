@@ -22,30 +22,32 @@
                       WindowStartupLocation="CenterScreen">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="Роль" />
-            <Button>
+            <Button IsEnabled="True">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="20" Height="20"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
 
                     </Rectangle>
-                    <TextBlock Margin="4 0 0 0"
+                    <TextBlock Margin="4 0 0 0" Name="txtRole"
+                               Foreground="White"
                    VerticalAlignment="Center"
-                   Text="Меню" />
+                   />
                 </StackPanel>
 
-            </Button>
+            </Button>-->
             <Button>
                 <StackPanel Name="menuHolder" Orientation="Horizontal">
                     <Menu Name="mymenu" Margin="4 0 0 0"  VerticalAlignment="Center">
                         <MenuItem Name="ChangeRoleMU" Header="Сменить роль">
-                            <MenuItem Name="SetRoleMU" Header="Администратор"/>
+                            <MenuItem Header="Администратор" Click="Admin"/>
+                            <MenuItem Header="Планировщик" Click="Plan"/>
+                            <MenuItem Header="Хранитель рецептов" Click="Recipe"/>
                         </MenuItem>
                         <MenuItem Name="ChangeWindowMU" Header="Окна">
                             <MenuItem Name="ProductsMU" Header="Продукты" Command="{Binding ShowProductCatalogCommand}"/>
                             <MenuItem Name="RecipesMU" Header="Рецепты"  Command="{Binding ShowRecipeCatalogCommand}"/>
                             <MenuItem Name="PlansMU" Header="Планы" Command="{Binding ShowPlanCatalogCommand}"/>
-                            <MenuItem Name="BasketsMU" Header="Распечатать список" Command="{Binding PrintBasketCommand}"/>
+                            <MenuItem Name="BasketsMU" Header="Cписки покупок" Command="{Binding PrintBasketCommand}"/>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
@@ -64,6 +66,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:MeasureProductRelationViewModel}">
             <views:MeasureProductRelationControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlanCatalogViewModel}">
             <views:PlanCatalogView/>

@@ -28,17 +28,8 @@ namespace CookBook_WPF.ViewModel
         #endregion
         public MainViewModel()
         {
-            CurrentViewModel = new PlanCatalogViewModel();
-            //CurrentViewModel = new ProductCatalogViewModel();
-           
-            //CurrentViewModel = new MeasureProductRelationViewModel(
-            //    new MeasureProductRelationViewModel.MeasureProductRelationInfo
-            //    {
-            //        productKey = 7,
-            //        mainMeasureValueKey = 7,
-            //        ParentViewModel = new ProductCatalogViewModel(new DialogCoordinator())
-            //    });
-
+             CurrentViewModel = new LoginViewModel();
+           // CurrentViewModel = null;
 
             mShowProductCatalogCommand = new RelayCommand(ShowProductCatalog);
             mShowRecipeCatalogCommand = new RelayCommand(ShowRecipeCatalog);
@@ -58,10 +49,7 @@ namespace CookBook_WPF.ViewModel
                 PrintBasketControl inputDialog = new PrintBasketControl();
                 inputDialog.ShowDialog();
             }
-            catch { MessageBox.Show("Корзина пуста"); }
-            //if (inputDialog.ShowDialog() == true)
-            //    vr = inputDialog.Answer;
-            //CurrentViewModel = new RecipeCatalogViewModel();
+            catch { MessageBox.Show("Список пуст"); }
         }
 
         private void ShowProductCatalog(object obj)

@@ -789,6 +789,11 @@ namespace CookBook_WPF.DataAccess
             {
                 try
                 {
+                    var mtrs = dbContext.Products.Include(p => p.nMaterialGroup).Where(p => p.nMaterialGroup.nKey == groupKey);
+                    var mprs = dbContext.MeasureProductRelations.Include(p => p.nProduct).
+                        Where(p => mtrs.Select(x => x.nKey).Contains(p.nProduct.nKey));
+                    dbContext.MeasureProductRelations.RemoveRange(mprs);
+                    dbContext.Products.RemoveRange(mtrs);
                     MaterialGroup mg = dbContext.MaterialGroups.FirstOrDefault(x => x.nKey == groupKey);
                     dbContext.MaterialGroups.Remove(mg);
                     dbContext.SaveChanges();
@@ -961,6 +966,6 @@ namespace CookBook_WPF.DataAccess
 
             }
         }
-    }
 
+    }
 }

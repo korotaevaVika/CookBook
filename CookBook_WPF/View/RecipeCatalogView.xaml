@@ -37,14 +37,14 @@
                   SelectedItem="{Binding SelectedRecipe, UpdateSourceTrigger=PropertyChanged}"
                   Style="{StaticResource AzureDataGrid}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Ключ" Binding="{Binding RecipeKey}" Visibility="Hidden" />
-                <DataGridTextColumn Width="150" Header="Название" Binding="{Binding RecipeName}" />
+                <DataGridTextColumn Header="Ключ" Binding="{Binding RecipeKey}" Visibility="Collapsed" />
+                <DataGridTextColumn Width="200" Header="Название" Binding="{Binding RecipeName}"/>
                 <DataGridTextColumn Width="150" Header="" Binding="{Binding ProductName}" />
-                <DataGridTextColumn Width="30" Header="№ продуктов" Binding="{Binding NumberIngredientsInRecipe}" />
-                <DataGridTextColumn Width="30" Header="№ порций" Binding="{Binding Portion}" />
-                <DataGridTextColumn Width="30" Header="№ [ЕИ]" Binding="{Binding Quantity}" />
-                <DataGridTextColumn Header="ЕИ" Binding="{Binding Measure}" Visibility="Visible"/>
-                <DataGridTextColumn Width="150" Header="Описание" Binding="{Binding Description}" />
+                <DataGridTextColumn Width="110" Header="№ продуктов" Binding="{Binding NumberIngredientsInRecipe}" />
+                <DataGridTextColumn Width="30" Header="№ порций" Binding="{Binding Portion}" Visibility="Collapsed"/>
+                <DataGridTextColumn Width="30" Header="№ [ЕИ]" Binding="{Binding Quantity}" Visibility="Collapsed"/>
+                <DataGridTextColumn Header="ЕИ" Binding="{Binding Measure}" Visibility="Collapsed"/>
+                <DataGridTextColumn Width="auto" Header="Описание" Binding="{Binding Description}" />
             </DataGrid.Columns>
         </DataGrid>
 
@@ -157,7 +157,7 @@
                 <TextBlock         
                     Grid.Row="1" Grid.Column="0" 
                     Margin="5"
-                    Text="Combo - Products:"/>
+                    Text="Готовое блюдо:"/>
                 <ComboBox
                      Grid.Row="1" Grid.Column="2" 
                     Margin="5"

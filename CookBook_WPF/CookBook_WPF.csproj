@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -93,8 +94,12 @@
     <Compile Include="ViewModel\MaintainBusketViewModel.cs" />
     <Compile Include="ViewModel\MeasureProductRelationViewModel.cs" />
     <Compile Include="ViewModel\PlanCatalogViewModel.cs" />
+    <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\RecipeCatalogViewModel.cs" />
     <Compile Include="ViewModel\ProductCatalogViewModel.cs" />
+    <Compile Include="View\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MaintainBusketControl.xaml.cs">
       <DependentUpon>MaintainBusketControl.xaml</DependentUpon>
     </Compile>
@@ -136,6 +141,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\LoginView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MaintainBusketControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

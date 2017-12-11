@@ -485,8 +485,10 @@ namespace CookBook_WPF.ViewModel
             if (mSuccess)
             {
                 IsGroupEdited = false;
+                Products = null;
             }
-            else MessageBox.Show(Message, "Error");
+            //else MessageBox.Show(Message, "Error");
+
         }
 
         private void AddProduct(object obj)
@@ -542,7 +544,7 @@ namespace CookBook_WPF.ViewModel
                 IsProductEdited = false;
                 LoadProducts();
             }
-            else MessageBox.Show(Message, "Error");
+            //else MessageBox.Show(Message, "Error");
         }
 
         #endregion

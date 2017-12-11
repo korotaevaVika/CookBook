@@ -102,29 +102,6 @@ namespace CookBook_WPF.ViewModel
         }
 
         #region Methods For Commands
-        //private void Save(object obj)
-        //{
-        //    bool mSuccess = false;
-        //    mSuccess = true;
-        //    //Message = DateTime.Now.ToString() + "\t" +
-        //    //    _model.SaveBasket(
-        //    //        plansIndexes,
-        //    //        basketKey,
-        //    //        ref mSuccess);
-
-        //    if (mSuccess)
-        //    {
-        //        LoadData();
-        //        UserInput = "Success";
-        //    }
-        //    else UserInput = "Error";
-
-        //}
-        //private bool CanSave(object obj)
-        //{
-        //    return true;
-        //}
-
         private bool CanChooseBusket(object obj)
         {
             return true;

@@ -82,8 +82,8 @@
     <Compile Include="Converters\InverseBoolToVisibilityConverter.cs" />
     <Compile Include="Converters\CheckBoxConverter.cs" />
     <Compile Include="DataAccess\MainModel.cs" />
+    <Compile Include="Helper Classes\DataWrappers\PlanWrapper.cs" />
     <Compile Include="Helper Classes\DataWrappers\MeasureProductWrapper.cs" />
-    <Compile Include="Helper Classes\DGVPrinter.cs" />
     <Compile Include="Helper Classes\RelayCommand.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModel\BindableBase.cs" />
@@ -201,9 +201,9 @@
     <Content Include="SQL_Scripts\Procedures\003 Create sp_SelectIngredients.sql" />
     <Content Include="SQL_Scripts\Procedures\002 Create sp_SelectMeasureValues.sql" />
     <Content Include="SQL_Scripts\Procedures\001 Create sp_SelectProducts.sql" />
+    <Content Include="SQL_Scripts\Triggers\TRG_AfterUpdatePlan.sql" />
     <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdateIngredient.sql" />
     <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdateMeasureProductRelation.sql" />
-    <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdatePlan.sql" />
     <Content Include="SQL_Scripts\Views\004 Create vwBasketList.sql" />
     <Content Include="SQL_Scripts\Views\003 Create vwPlanList.sql" />
     <Content Include="SQL_Scripts\Views\002 Create vwRecipeList.sql" />

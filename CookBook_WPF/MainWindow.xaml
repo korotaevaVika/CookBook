@@ -8,7 +8,8 @@
                        
         xmlns:local="clr-namespace:CookBook_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="auto" Width="700"
+        Title="" Height="auto" Width="700"
+                       
                        ShowTitleBar="True"
                        ShowMaxRestoreButton="True"
                        ResizeMode="CanResizeWithGrip"

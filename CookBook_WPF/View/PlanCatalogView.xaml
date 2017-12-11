@@ -63,7 +63,7 @@
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=HasBasket}" Value="1">
-                            <Setter Property="Background" Value="MediumPurple"></Setter>
+                            <Setter Property="Background" Value="RosyBrown"></Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Path=HasBasket}" Value="0">
                             <Setter Property="Background" Value="MediumSeaGreen"></Setter>
@@ -73,7 +73,7 @@
             </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn IsReadOnly="False"
-                                        Binding="{Binding Path=RowData.Row.IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <DataGridTextColumn Header="PlanKey" Binding="{Binding PlanKey}" Visibility="Hidden" />
                 <DataGridTextColumn Header="RecipeKey" Binding="{Binding RecipeKey}" Visibility="Hidden" />
                 <DataGridTextColumn Header="ProductKey" Binding="{Binding ProductKey}" Visibility="Hidden" />
@@ -102,45 +102,8 @@
             </Button>
         </StackPanel>
 
-        <!--<DataGrid ItemsSource="{Binding Path=Plans}"
-                  Grid.Row="2" CanUserAddRows="False"
-                  AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn ElementStyle="{DynamicResource MetroDataGridCheckBox}"
-                                        EditingElementStyle="{DynamicResource MetroDataGridCheckBox}"
-                                        Header="IsSelected"
-                                        Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=OneWay}"
-                                        />
-
-                <DataGridTemplateColumn Header="Дата">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding tDate}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <DataTemplate>
-                            <DatePicker SelectedDate="{Binding tDate}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellEditingTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTextColumn Header="Блюдо"
-                                    Binding="{Binding nProduct.szMaterialName}" />
-              
-                <Controls:DataGridNumericUpDownColumn Header="Кол-во"
-                                                      Binding="{Binding rQuantity}"
-                                                      StringFormat="N2"
-                                                      Minimum="0" />
-
-                <DataGridTextColumn Header="Блюдо"
-                                    Binding="{Binding nRecipe.szRecipeName}" />
-            </DataGrid.Columns>
-        </DataGrid>-->
-
-
-
         <Border
+            IsEnabled="{Binding AllowPlanEditing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3"
                 BorderThickness="1" BorderBrush="Transparent">
             <Border.LayoutTransform>

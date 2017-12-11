@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CookBook_WPF.Data;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using CookBook_WPF.Helper_Classes.DataWrappers;
-using System.Windows.Forms;
-using System.Drawing;
 
 namespace CookBook_WPF.DataAccess
 {
@@ -79,6 +75,20 @@ namespace CookBook_WPF.DataAccess
             }
         }
 
+        internal void DeleteBasket(int v)
+        {
+            using (CookBookModel dbContext = Context)
+            {
+                var basket = dbContext.Baskets.Include(x => x.Plans).FirstOrDefault(x => x.nKey == v);
+                basket.Plans.Clear();
+                var details = dbContext.BasketDetails.Include(x => x.nBasket).
+                     Where(x => x.nBasket.nKey == v).ToList();
+                dbContext.BasketDetails.RemoveRange(details);
+                dbContext.Baskets.Remove(basket);
+                dbContext.SaveChanges();
+            }
+        }
+
         internal DataTable GetBasketReportData(int nBasketKey)
         {
             using (CookBookModel dbContext = Context)
@@ -87,7 +97,7 @@ namespace CookBook_WPF.DataAccess
                 dbContext.Database.Connection.Open();
                 var con = (SqlConnection)dbContext.Database.Connection;
                 var cmd = new SqlCommand("exec sp_SelectBasketReportData " +
-                    "  @pBasketKey = " + nBasketKey , con);
+                    "  @pBasketKey = " + nBasketKey, con);
                 using (var rdr = cmd.ExecuteReader())
                 {
                     dt.Load(rdr);
@@ -168,6 +178,10 @@ namespace CookBook_WPF.DataAccess
                 {
                     if (nKey == 0)
                     {
+                        if (string.IsNullOrWhiteSpace(description))
+                        {
+                            description = "Список от " + DateTime.Now;
+                        }
                         if (dbContext.Baskets.ToList().FirstOrDefault(x => x.szDescription == description) != null)
                         {
                             return "Ошибка создания корзины\nКорзина с таким описанием уже существует";
@@ -186,7 +200,9 @@ namespace CookBook_WPF.DataAccess
                     }
                     else
                     {
-                        if (dbContext.Baskets.ToList().Exists(x => x.szDescription == description && x.nKey != nKey))
+                        if (dbContext.Baskets.ToList().Exists(x => x.szDescription == description
+                        && x.tDate == selectedDate
+                        && x.nKey != nKey))
                         {
                             throw new InvalidOperationException(
                                 "Ошибка создания корзины\nКорзина с таким описанием уже существует");
@@ -409,10 +425,11 @@ namespace CookBook_WPF.DataAccess
             }
         }
 
-        internal DataTable GetPlans(DateTime dateFrom, DateTime dateTill)
+        internal List<PlanWrapper> GetPlans(DateTime dateFrom, DateTime dateTill)
         {
             using (CookBookModel dbContext = Context)
             {
+                List<PlanWrapper> plans = new List<PlanWrapper>();
                 DataTable dt = new DataTable();
 
                 dbContext.Database.Connection.Open();
@@ -425,7 +442,26 @@ namespace CookBook_WPF.DataAccess
                 {
                     dt.Load(rdr);
                 }
-                return dt;
+                if (dt != null && dt.Rows.Count != 0)
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        plans.Add(new PlanWrapper
+                        {
+                            PlanKey = (int)row["PlanKey"],
+                            Description = (string)row["Description"],
+                            HasBasket = (int)row["HasBasket"],
+                            ProductKey = (int)row["ProductKey"],
+                            ProductName = (string)row["ProductName"],
+                            RecipeKey = (int)row["RecipeKey"],
+                            RecipeName = (string)row["RecipeName"],
+                            tDate = (DateTime)row["tDate"],
+                            rQuantity = (double)row["rQuantity"],
+                            IsSelected = false
+                        });
+                    }
+                }
+                return plans;
             }
         }
 

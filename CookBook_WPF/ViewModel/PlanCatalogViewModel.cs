@@ -8,23 +8,25 @@ using CookBook_WPF.Data;
 using System.Collections.Generic;
 using System.Linq;
 using CookBook_WPF.View;
+using System.Collections.ObjectModel;
+using CookBook_WPF.Helper_Classes.DataWrappers;
 
 namespace CookBook_WPF.ViewModel
 {
     public class PlanCatalogViewModel : BindableBase
     {
         private MainModel _model;
-        private DataTable mPlans;
+        private List<PlanWrapper> mPlans;
 
         private List<int> selectedIndexes;
-        public DataTable Plans
+        public List<PlanWrapper> Plans
         {
             get { return mPlans; }
             set { mPlans = value; OnPropertyChanged(); }
         }
 
-        private DataRowView mSelectedPlan;
-        public DataRowView SelectedPlan
+        private PlanWrapper mSelectedPlan;
+        public PlanWrapper SelectedPlan
         {
             get { return mSelectedPlan; }
             set
@@ -34,7 +36,27 @@ namespace CookBook_WPF.ViewModel
                 {
                     EditPlan(null);
                 }
+                if (SelectedPlan != null && SelectedPlan.HasBasket == 1)
+                {
+                    AllowPlanEditing = false;
+                }
+                else
+                { AllowPlanEditing = true; }
                 mDeletePlanCommand.OnCanExecuteChanged();
+                OnPropertyChanged();
+            }
+        }
+
+        private bool mAllowPlanEditing;
+        public bool AllowPlanEditing
+        {
+            get
+            {
+                return mAllowPlanEditing;
+            }
+            set
+            {
+                mAllowPlanEditing = value;
                 OnPropertyChanged();
             }
         }
@@ -82,7 +104,7 @@ namespace CookBook_WPF.ViewModel
                 {
                     LoadRecipes(SelectedProduct.nKey);
                     SelectedRecipe = mSelectedPlan != null ? RecipesCollection?.FirstOrDefault(
-                       x => x.nKey == (int)mSelectedPlan?.Row["RecipeKey"]) :
+                       x => x.nKey == mSelectedPlan.RecipeKey) :
                        RecipesCollection?.FirstOrDefault();
                 }
                 OnPropertyChanged();
@@ -220,29 +242,19 @@ namespace CookBook_WPF.ViewModel
 
                 if (inputDialog.ShowDialog() == true)
                     vr = inputDialog.Answer;
-            } 
+            }
         }
 
         private bool CanCreateBusket(object obj)
         {
             selectedIndexes = new List<int>();
-            try
+            if (Plans != null)
             {
-                if (Plans != null)
-                {
-                    foreach (DataRow row in Plans.Rows)
-                    {
-                        if (row != null && (int)row["IsSelected"] == 1)
-                        {
-                            selectedIndexes.Add((int)row["PlanKey"]);
-                        }
-                    };
-                }
+                selectedIndexes = Plans.Where(x => x.IsSelected).Select(x => x.PlanKey).ToList();
+                return selectedIndexes.Count() != 0;
+
             }
-            catch (Exception ex)
-            {
-            }
-            return selectedIndexes.Count != 0;
+            else return false;
         }
 
         private void LoadPlans()
@@ -320,18 +332,23 @@ namespace CookBook_WPF.ViewModel
         private void EditPlan(object obj)
         {
             IsPlanEdited = true;
-            mPlanKey = (int)mSelectedPlan.Row["PlanKey"];
+            //mPlanKey = (int)mSelectedPlan.Row["PlanKey"];
+            //SelectedProduct = OutputProductsCollection.FirstOrDefault(
+            //    x => x.nKey == (int)mSelectedPlan.Row["ProductKey"]);
+            //Quantity = (double)mSelectedPlan.Row["rQuantity"];
+            //Date = (DateTime)mSelectedPlan.Row["tDate"];
+            mPlanKey = mSelectedPlan.PlanKey;
             SelectedProduct = OutputProductsCollection.FirstOrDefault(
-                x => x.nKey == (int)mSelectedPlan.Row["ProductKey"]);
-            Quantity = (double)mSelectedPlan.Row["rQuantity"];
-            Date = (DateTime)mSelectedPlan.Row["tDate"];
+                x => x.nKey == mSelectedPlan.ProductKey);
+            Quantity = mSelectedPlan.rQuantity;
+            Date = mSelectedPlan.tDate;
         }
 
         private void DeletePlan(object obj)
         {
             bool mSuccess = false;
             Message = _model.DeletePlan(
-                (int)mSelectedPlan.Row["PlanKey"],
+                mSelectedPlan.PlanKey,
                 ref mSuccess);
             if (mSuccess)
             {

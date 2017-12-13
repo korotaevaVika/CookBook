@@ -210,6 +210,8 @@
     <Content Include="SQL_Scripts\Procedures\003 Create sp_SelectIngredients.sql" />
     <Content Include="SQL_Scripts\Procedures\002 Create sp_SelectMeasureValues.sql" />
     <Content Include="SQL_Scripts\Procedures\001 Create sp_SelectProducts.sql" />
+    <Content Include="SQL_Scripts\Security\Roles.sql" />
+    <Content Include="SQL_Scripts\Security\UserList.sql" />
     <Content Include="SQL_Scripts\Triggers\TRG_AfterUpdatePlan.sql" />
     <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdateIngredient.sql" />
     <Content Include="SQL_Scripts\Triggers\TRG_InsertUpdateMeasureProductRelation.sql" />

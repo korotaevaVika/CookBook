@@ -454,7 +454,7 @@ namespace CookBook_WPF.ViewModel
             Portion = (double)SelectedRecipe.Row["Portion"];
             Quantity = (double)SelectedRecipe.Row["Quantity"];
 
-            OutputProduct = OutputProductsCollection.FirstOrDefault(
+            OutputProduct = OutputProductsCollection?.FirstOrDefault(
                 x => x.nKey == (int)SelectedRecipe.Row["ProductKey"]);
         }
 

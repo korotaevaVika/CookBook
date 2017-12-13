@@ -25,7 +25,7 @@ SELECT
 	  bsk.nKey as BasketKey
 	, bsk.tDate as Date
 	, bsk.szDescription as Description
-	, CONCAT(bsk.tDate, N' ', bsk.szDescription ) as szDisplayText
+	, CONCAT(CONVERT(date, bsk.tDate), N' ', bsk.szDescription ) as szDisplayText
 FROM tbl_Basket bsk
 go
 

@@ -880,9 +880,9 @@ namespace CookBook_WPF.DataAccess
                         ToList();
                     return pd;
                 }
-                catch
+                catch(Exception ex)
                 {
-                    return null;
+                    return new List<Product>();
                 }
             }
         }

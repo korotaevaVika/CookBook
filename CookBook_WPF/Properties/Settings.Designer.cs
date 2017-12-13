@@ -22,17 +22,5 @@ namespace CookBook_WPF.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Администратор")]
-        public string UserRole {
-            get {
-                return ((string)(this["UserRole"]));
-            }
-            set {
-                this["UserRole"] = value;
-            }
-        }
     }
 }

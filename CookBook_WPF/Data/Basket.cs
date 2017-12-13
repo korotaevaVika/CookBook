@@ -15,6 +15,7 @@ namespace CookBook_WPF.Data
         [Key]
         public int nKey { get; set; }
         public DateTime tDate { get; set; }
+        [StringLength(120)]
         public string szDescription { get; set; }
         public virtual ICollection<Plan> Plans { get; set; }
     }
